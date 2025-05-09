@@ -60,3 +60,6 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+
+# Google Cloud
+*.json
