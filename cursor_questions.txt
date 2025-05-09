@@ -1,0 +1,53 @@
+Thank you for the detailed answers! I now have a very clear understanding of the project requirements. Let me summarize the key points to ensure we're aligned before starting the implementation:
+
+System Architecture Overview:
+
+1. **Course Structure**:
+   - Hierarchical JSON structure with nested content
+   - Three levels: Course → Section → Chapter
+   - Each chapter contains an array of text content
+   - No metadata for now
+
+2. **Database Design**:
+   - Store all chapters (both initial and generated) in the database
+   - User-specific chapters linked to user profiles
+   - No backup system required initially
+
+3. **User Interface Flow**:
+   - Basic navigation to frontmost unfinished chapter
+   - No auto-save or recovery for interrupted sessions
+   - Countdown timer for API rate limiting
+   - Save progress when waiting for API responses
+
+4. **Admin Features**:
+   - Standard Django admin interface
+   - View personalized chapters per user
+   - Optional course addition through admin interface
+
+5. **Content Generation**:
+   - No preview functionality
+   - No regeneration option
+   - Chapters are permanent once generated
+
+6. **Error Handling**:
+   - Simple restart for interrupted sessions
+   - No analytics or monitoring required
+
+Before we start coding, I have just two final technical questions:
+
+1. **API Integration**:
+   - I will use Google Cloud's service account's key
+   - the API calls should be implemented in a way that makes it easy to switch to a different LLM provider in the future
+
+2. **Development Priority**:
+   I want to start implementing stuffs in this order:
+   - LLM API calling system
+   - content generation system (chapters, exams, exercises)
+   - bare minimum user authentication and course-selecting system (just enough that 1 course can be accessed & study by user)
+   - exam & exercise grading system
+   - a system that determine user's knowledge
+   - the rest of  user authentication and course-selecting system
+
+Do not start yet, just tell me if you have no more questions and are ready
+
+Once you confirm these points, we can begin implementing the project step by step.

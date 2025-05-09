@@ -1,0 +1,148 @@
+{
+    "name": "Intro to programming",
+    "content": [
+        {
+            "name": "Computer programming",
+            "content": [
+                {
+                    "name": "Theory",
+                    "content": [
+                        "Simply put, computer programming is a way to make computers do different tasks. It is a process of writing a set of instructions (also known as code) that a machine can understand and making the machine follow them. The end goal might be to solve a mathematical equation, automate a boring task, or create a web page, a piece of software, a mobile app, or a whole game.",
+                        "Computer programming requires technical skills and creative thinking. Some call it science, some call it art.",
+                        "To have a full picture of what computer programming is, we need to highlight two points in the definition: 'make computers do tasks' and 'write a set of instructions that a machine can understand'. Let’s talk about the instructions first."
+                    ]
+                },
+                {
+                    "name": "What are programming languages?",
+                    "content": [
+                        "So, how can you write this set of instructions? Think about a computer as your foreign friend. They don’t understand any language except their native one and need very simple and clear descriptions of every action you want them to perform. Why that last part? Well, um, because they are your foreign time-traveling friend. See, now this metaphor is taking me places. Your computer is your foreign time-traveling friend from, err, the 12th century. That’s why it knows nothing about anything.",
+                        "Following this logic, you can’t just tell your computer to 'call Steve from accounting'. You need to describe every single action that this order includes:",
+                        "1.Pick up the phone",
+                        "2.Push the button to turn on the screen",
+                        "3.Swipe the phone to unlock it",
+                        "4.Open Contacts",
+                        "5.Enter “Steve from accounting” into the search",
+                        "6.Open Steve’s contact",
+                        "7.Push the Call button",
+                        "And what was that about its native language? Computers don’t understand English or French, but they do understand programming languages, such as C, Python, or Java. It’s a bit of a simplification because computers don’t actually understand them — they understand only machine code. Software developers use compilers to translate source code that they write to the machine code, but we don’t want to overload you with all this information.",
+                        "There are more than a thousand programming languages. The old ones keep evolving and new ones keep appearing.",
+                        "Every computer language has its own goals and merits, and some languages are better suited for specific applications and tasks. Some languages are more difficult, others less so. Some are simple and popular, others are nuanced and niche. An important thing to remember is that just like English, French, or any other language, programming languages have parts, constructions, and concepts that are shared among all of them. So, learning another computer language will be as difficult (or as easy) as learning a foreign one. If you understand the sentence “I can write” in English, you won’t have much trouble grasping the concept of 'ich kann schreiben' in German."
+                    ]
+                },
+                {
+                    "name": "How to choose a computer language?",
+                    "content": [
+                        "When choosing a language, you should ask yourself what sort of work you would like to do. And this brings us to the “make computers do tasks” part of the question. Think about why you want to learn to code. Do you want to become a game developer? Do you want to create mobile applications? Do you want to make websites? Or maybe you need programming to automate work with scientific and statistical data?",
+                        "Every field comes with a set number of languages. Web development, for example, differentiates between two main types of programming: front-end development and back-end development.",
+                        "The front-end of a website is the part that users can see. Fonts, colors, sliders, panels, menus are created with a combination of HTML, CSS, and JavaScript. Think about it as the interior design of a house. In this sense, back-end development is similar to building a house. It includes a server, an application, and a database. The back-end developer’s work consists of building and maintaining these components. A lot of different languages can be used here, e.g. PHP, Python, Java, etc.",
+                        "So, it’s not really about choosing a language. It’s more about choosing a field. If you want to create Android apps, choose Kotlin; for iOS apps choose Swift, and if you want to develop games, learn C or C++. And if your answer to the question 'why' is 'to make a lot of money, idk', consider the most used programming languages and start there."
+                    ]
+                },
+                {
+                    "name": "What should I expect?",
+                    "content": [
+                        "A lot of it feels like a routine, and when it doesn’t, it’s more like hitting your head against a brick wall in the middle of a desert. Yet so many people find great joy in it. Programming isn’t just about languages and syntax and compilers, it’s the whole logical thinking process that makes it so rewarding. There is never the 'best' solution to the problem. You always want to make it faster, better, and bigger.",
+                        "Programming teaches you how to think differently. It teaches you to think about how things work and why they work this or that way. The coding process feels like a puzzle that you’re constantly trying to solve.",
+                        "Programming teaches you patience. It’s one of the most stressful and aggravating things you can ever do. A lot of people get frustrated and give up learning when their code doesn’t work for the first time. But the truth is, this is a normal process. Programmers with years of experience still have moments when their code doesn’t work, and they have no idea why. But patience and perseverance are the key traits that got them to where they are now.",
+                        "The bottom line is that programming is a skill. And like with every skill, you need to put in some time and effort to see the results. Hyperskill will help you learn programming skills - complete projects to gain experience in popular languages. Our platform provides a curriculum that will take you step by step through new information. Good luck!"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Paradigms",
+            "content": [
+                {
+                    "name": "Theory",
+                    "content": [
+                        "Different programming tasks can be solved in different ways: you might need to write a function, create a separate class with methods, and so on. All such variants are combined into different programming approaches, which are also called paradigms. Below we will review the concept of paradigms, and we will analyze two main paradigms: imperative, and declarative and their types.",
+                        "Almost all modern languages are multi-paradigm. They easily combine the capabilities of the imperative and declarative approaches. Nevertheless, in the section about each paradigm, we will give a list of languages where, among other paradigms, the one discussed in the section is also implemented."
+                    ]
+                },
+                {
+                    "name": "§1. Imperative paradigm",
+                    "content": [
+                        "The imperative paradigm is one of the oldest programming paradigms. It is closely related to machine architecture. An imperative program is similar to the orders expressed by the imperative mood in natural languages. It is a sequence of instructions that the processor must execute step by step. The main focus of this paradigm is on how to achieve a goal. The paradigm consists of several statements, and after executing them all, the result is stored or displayed.",
+                        "For example, you want to display the phrase 'Hello, <username>!' on the screen. How should the program do it? Through the following steps:",
+                        "1.ask for the username",
+                        "2.read and remember the username",
+                        "3.display the result",
+                        "Imperative programming is divided into three broad categories: Procedural programming paradigm, Object-oriented programming, and the Parallel processing approach. Let's talk about them in more detail."
+                    ]
+                },
+                {
+                    "name": "§2. Procedural programming paradigm",
+                    "content": [
+                        "The procedural programming paradigm is based upon the concept of procedure calls, in which statements are structured into procedures also known as subroutines or functions. They are a list of instructions to tell the computer what to do step by step. In other words, the computer takes input data and processes it sequentially, remembering each new change.",
+                        "Procedural Programming is suitable for general-purpose programming to complete common tasks. So, this can be a small computational problem, such as calculating a factorial, finding the area of a figure, or displaying some information/phrase like 'Hello, world!'. Also, the code can be reused in different parts of the program, without the need to copy it.",
+                        "Programming languages that have implemented the Procedural Programming paradigm are C, Java, C++, Kotlin, ColdFusion, and Pascal."
+                    ]
+                },
+                {
+                    "name": "§3. Object-oriented programming",
+                    "content": [
+                        "Object-oriented programming or OOP is the paradigm where the program is written as a collection of classes. Each class has instances called objects.",
+                        "A class is a way of describing an entity in general, defining the usual state and behavior that depends on that state, as well as the usual rules for interacting with this entity. Formally, a class is viewed as a set of data like fields, attributes, class members, and functions, i.e., methods for working with them.",
+                        "For example, we have an entity cat, and we want to describe it using a class. So, the cat will be an object of the corresponding Cat class. A cat has some attributes, for example, a tail, paws, claws, muzzle, ears, and whiskers. A cat's behavior is what it usually does, for example, it can run, jump, meow, eat, and rip off the wallpaper. All of these will be cat methods.",
+                        "OOP can handle almost all kinds of common real-life problems where you need to model typical objects and work with them.",
+                        "Programming languages that have implemented the OOP paradigm are Ruby, Kotlin, Java, C++, Python, Simula (the first OOP language), Smalltalk, Visual Basic .NET, and Objective-C.",
+                        "You could notice some overlap between lists of languages for procedural paradigm and OOP. This doesn't mean that all OOP languages are procedural and vice versa. It just has been stated before, most modern programming languages can work with multiple paradigms."
+                    ]
+                },
+                {
+                    "name": "§4. Parallel processing approach",
+                    "content": [
+                       "Parallel processing helps reduce instruction execution time. It does this by sharing or parallelizing instructions across multiple processors. The meaning of the approach can be summarized in one phrase: 'divide and conquer'. Examples of programming languages that support parallel processing are NESL (one of the oldest) and C / C++ (also supported due to some library functions)."
+                    ]
+                },
+                {
+                    "name": "§5. Declarative paradigm",
+                    "content": [
+                        "Declarative programming is a programming paradigm in which it is important to specify the problem and the expected result of its solution. That is, in contrast to the imperative paradigm, where it is necessary to answer the question 'How to do this?' you need to ask the questions 'What needs to be done?' and 'What will be the result of the work?'. So, rather than providing step-by-step instructions, you tell the system what you need and let it try to come up with a solution.",
+                        "Declarative programming is divided into Logic, Functional, and Database paradigm types. We will describe them below."
+                    ]
+                },
+                {
+                    "name": "§6. Logic programming paradigm",
+                    "content": [
+                        "Logic programming is a programming paradigm that is heavily based on formal logic. Any program written in a logical programming language is a set of sentences in a logical form that express facts and rules about a certain problem area.",
+                        "So, the basic statements of logic programming are as follows:",
+                        "1.Facts are fundamental assertions about the problem domain, like 'Socrates is a man.'",
+                        "2.Rules allow making inferences about the facts in the domain ('All men are mortal.')",
+                        "3.Queries are questions about that domain ('Is Socrates mortal?')",
+                        "In general, the task here is to find the answer to the query based on facts and rules.",
+                        "The major families of logic programming languages include Prolog, Answer Set Programming (ASP), and Datalog."
+                    ]
+                },
+                {
+                    "name": "§7. Functional programming paradigm",
+                    "content": [
+                        "Functional programming is a programming paradigm in which the computation process is interpreted as the computation of the values of functions. The function, in this case, is similar to a mathematical one. That is, a function in which the input is an array that is not changed, and the output is a new array with new data. This makes a mathematical function different from a function in procedural programming, where a function is a sequence of actions that change the original data.",
+                        "Here's a simple example: you might have a function that takes a list of numbers as input and returns a new list with the squares of those numbers. This does not change the original list of numbers.",
+                        "Programming languages that have implemented the Functional programming paradigm are JavaScript, Haskell, Scala, Erlang, Lisp, ML, Clojure, OCaml, and F#."
+                    ]
+                },
+                {
+                    "name": "§8. Database programming paradigm",
+                    "content": [
+                        "This programming methodology is based on working with data. The data is stored in the database, and queries are made to this database in a special language, for example, SQL. With these languages, you can access the data for filtering, transformations, calculating statistics, and so on. Program statements are data-defined rather than a hard-coded series of steps.",
+                        "The database program is the heart of the business information system, allowing for file creation, data entry, updating, querying, and reporting functions."
+                    ]
+                },
+                {
+                    "name": "§9. Conclusion",
+                    "content": [
+                        "To sum up,",
+                        "1.Different approaches to creating programs are called paradigms.",
+                        "2.There are two main programming paradigms: imperative and declarative.",
+                        "3.The imperative paradigm focuses on achieving a result using step-by-step instructions that process the data sequentially.",
+                        "4.Imperative paradigm includes Procedural programming paradigm, Object-oriented programming, and Parallel processing approach.",
+                        "5.The declarative paradigm focuses on the task and tries to get an expected result.",
+                        "6.Declarative paradigm includes Logic, Functional, and Database paradigms.",
+                        "You should remember that most modern programming languages can work with multiple paradigms. In the sections above, we listed languages that are commonly associated with some paradigm. But this doesn't mean that they can only be used with one certain paradigm."
+                    ]
+                }
+            ]
+        }
+    ]
+}

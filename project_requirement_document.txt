@@ -1,0 +1,57 @@
+Tech stack(what techs I want this project to use)
+- django
+- use LLM via google cloud's API
+
+Goal(what I want the project to do)
+- a website that provide user with personalized course, with exercises and exam to measure user's knowledge
+
+User story(How I think the user will use the website)
+- assuming that this is the user's first time on this website
+1. user enter the website via "index" page
+2. user go to the "create account" page to create an account
+3. user go back to "index" page, then enter the "login" page
+4. user log in to the website, entering the "all course" page
+5. user select the course they want to study, entering that couse's "course"
+ page
+6. user start taking the pre-course exam, entering a "exam" page with the chosen exam
+7. user submit their exam answers
+8. server extract the exam answers
+9. server create a prompt using the exam questions, the questions's golden answers, and the user's answers
+10. server send the prompt to LLM via API, to have the LLM check the user's answers and determine the user's knowledge before taking the course
+11. LLM send user's score and knowledge to the server
+12. server create a prompt using the course's content user's knowledge
+13. server send the prompt to LLM via API, to have the LLM create the course's chapters that are personalized to the user, based on how much user already known relating to the course's content
+14. LLM send personalized chapters to server
+15. for each chapter received:
+    15.1 server create a prompt using the chapter's content
+    15.2 the server send the prompt to LLM via API, to have the LLM create an exercise based on chapter's content
+    15.3 LLM send chapter's exercise, and their golden answers to the server
+16. server display the chapters in the course's "course" pages
+17. for each chapter in the course:
+    17.1 user select the chapter, entering that chapter's 1st "chapter" page
+    17.2 user read through all of the chapter's pages
+    17.3 user start doing exercise, entering that chapter's exercise's "exercise" page
+    17.4 user submit their exercise answers
+    17.5 server extract the answers
+    17.6 server create a prompt using the exercise questions, the questions's golden answers, and the user's answers
+    17.7 server send the prompt to LLM via API, to have the LLM check the user's answers and determine the user's knowledge gained from studying the chapter
+    17.8 LLM send user's score and knowledge to the server
+    17.9 server add the received knowledge to the list of user's knowledge
+    17.10 server create a prompt using the user's knowledge, and the chapter's content
+    17.11 server send the prompt to LLM via API, to have the LLM determine if the user understood enough of the chapter or not, and whatever or not should extra chapter be created
+    17.12 if LLM determined that extra chapter should be created:
+        17.12.1 LLM send request(s) to create extra chapter, alongside what subject each extra chapter should cover
+        17.12.2 for each request that server received:
+            17.12.2.1 server make a prompt using the the subject the extra chapter should cover, and the course's content
+            17.12.2.2 server send the prompt to LLM via API, to have the LLM create the extra chapter's content
+            17.12.2.3 LLM send extra chapter to the server
+            17.12.2.4 server ask LLM to create exercise for the extra chapter, repeating step 15.1 to 15.3 using the extra chapter's information
+        17.12.3 server add extra chapter to the list of the course's chapters
+18. user take the course's final exam, entering the final exam's "exam" page
+19. user submit their exam answers
+20. repeat step 17.5 to 17.12 to check user's exam answers, determine user's knowledge, and create extra chapter if needed
+21. if extra chapters are created, user could study those chapters, then retake the final exam
+
+extra python files(.py files to be created to make it easier to read & write this project)
+- caller: contain function for calling LLM API
+- generator: contain function for creating chapters, exams, and exercises
