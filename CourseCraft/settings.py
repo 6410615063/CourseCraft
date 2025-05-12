@@ -127,7 +127,15 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Google Cloud Settings
+# Google API Settings
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 GOOGLE_CLOUD_PROJECT = os.getenv('GOOGLE_CLOUD_PROJECT')
-GOOGLE_CLOUD_LOCATION = os.getenv('GOOGLE_CLOUD_LOCATION', 'us-central1')
+
+# Ensure the API key is set
+if not GOOGLE_API_KEY:
+    raise ValueError("GOOGLE_API_KEY environment variable is not set")
+
+# Ensure the project ID is set
+if not GOOGLE_CLOUD_PROJECT:
+    raise ValueError("GOOGLE_CLOUD_PROJECT environment variable is not set")

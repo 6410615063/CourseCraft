@@ -1,11 +1,11 @@
 Django==5.0.2
 python-dotenv==1.0.1
-Pillow==10.2.0  # For image handling
-django-crispy-forms==2.1  # For better form rendering
-crispy-bootstrap5==2024.2  # Bootstrap 5 template pack for crispy-forms
-django-allauth==0.61.1  # For authentication
-whitenoise==6.6.0  # For static files serving
-gunicorn==21.2.0  # For production deployment
-psycopg2-binary==2.9.9  # PostgreSQL adapter (if you plan to use PostgreSQL)
-google-cloud-aiplatform==1.42.1  # For Gemini API
-google-auth==2.27.0  # For Google Cloud authentication 
+Pillow==11.2.1  # Latest stable version
+django-crispy-forms==2.1
+crispy-bootstrap5==2024.2
+django-allauth==0.61.1
+whitenoise==6.6.0
+gunicorn==21.2.0
+psycopg2-binary==2.9.9
+google-generativeai==0.3.2
+google-auth==2.27.0 

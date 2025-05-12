@@ -1,9 +1,9 @@
+# is not working
 import os
 import time
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
-from google.cloud import aiplatform
-from google.oauth2 import service_account
+import google.generativeai as genai
 from django.conf import settings
 
 class LLMCaller:
@@ -13,18 +13,14 @@ class LLMCaller:
         self.max_retries = 3
         self.retry_delay = 5  # seconds
         
-        # Initialize the Gemini API client
-        credentials = service_account.Credentials.from_service_account_file(
-            settings.GOOGLE_APPLICATION_CREDENTIALS
-        )
-        aiplatform.init(
-            credentials=credentials,
-            project=settings.GOOGLE_CLOUD_PROJECT,
-            location=settings.GOOGLE_CLOUD_LOCATION
-        )
+        # Configure the Gemini API with API key
+        if not settings.GOOGLE_API_KEY:
+            raise ValueError("GOOGLE_API_KEY is not set in settings")
+            
+        genai.configure(api_key=settings.GOOGLE_API_KEY)
         
-        # Initialize the model
-        self.model = aiplatform.GenerativeModel('gemini-pro')
+        # Initialize the model - using Gemini 2.0 Flash
+        self.model = genai.GenerativeModel('gemini-2.0-flash')
 
     def _wait_for_rate_limit(self) -> None:
         """Wait if necessary to respect rate limits."""
