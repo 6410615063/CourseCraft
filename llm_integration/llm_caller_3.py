@@ -90,13 +90,26 @@ class LLMCaller:
                     "top_p": 0.8,
                     "top_k": 40,
                     "max_output_tokens": 300,
+                },
+                "systemInstruction": {
+                    "role": "",
+                    "parts": [
+                    {
+                        "text": system_prompt
+                    }
+                    ]
                 }
             }
 
             response = requests.post(url, headers=headers, json=data)
             
             if response.status_code == 200:
-                return self._convert_response(response)
+                response_text = self._convert_response(response)
+
+                # print(f"_make_api_call: response_text = {response_text}")
+                print("_make_api_call: success")
+
+                return response_text
             else:
                 error_msg = f"API call failed with status {response.status_code}: {response.text}"
                 logger.error(error_msg)

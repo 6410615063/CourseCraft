@@ -1,0 +1,10 @@
+superuser
+admin
+nimda12345
+
+user
+testuser1
+tset1234
+
+testuser2
+tset2345

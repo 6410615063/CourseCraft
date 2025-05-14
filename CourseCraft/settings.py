@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'llm_integration',  # Our new app
+    'course_generation',  # Course generation app
+    'authentication',  # Authentication app
 ]
 
 MIDDLEWARE = [

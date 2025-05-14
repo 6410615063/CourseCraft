@@ -16,8 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('llm/', include('llm_integration.urls')),
+    path('courses/', include('course_generation.urls')),
+    path('auth/', include('authentication.urls')),
+    # path('', auth_views.RedirectView.as_view(url='/auth/login/', permanent=True)),
 ]
