@@ -8,3 +8,10 @@ tset1234
 
 testuser2
 tset2345
+
+create a Chapter model, it must have:
+- name: name of the chapter
+- user: the user who created the Chapter
+- course: the course it belong to
+- content: content of the Chapter
+
