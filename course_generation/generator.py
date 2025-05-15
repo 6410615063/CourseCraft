@@ -6,14 +6,19 @@ import json
 
 def generate_course(user, course):
     """
-    Generate a personalize Course, which include:
-    Chapters
-    Exercise for each Chapter
+    Generate personalized chapters for a user based on a course's content.
+    The course object contains the base content, and this function will:
+    1. Analyze user's knowledge level
+    2. Filter and adapt the content
+    3. Create personalized chapters
 
     Input:
     user: user object. to get knowledge & assign the chapters to
     course: course object. to get content from & assign chapters to
     """
+
+    print("generate_course: 1")
+
     # Initialize LLM caller
     llm_caller = LLMCaller()
 
@@ -23,18 +28,20 @@ def generate_course(user, course):
         topic=course.title
     ).first()
 
+    print("generate_course: 2")
+
     # Prepare the prompt for content filtering
     system_prompt = f"""You are an expert course creator. Analyze the course content and user's knowledge level to determine what content needs to be covered.
-    User's current knowledge level: {user_knowledge.knowledge_level if user_knowledge else 'beginner'}
-    Target knowledge level: {course.knowledge_level}"""
+    User's current knowledge level: {user_knowledge.knowledge_level if user_knowledge else 'beginner'}"""
 
     messages = [
-        {"role": "system", "content": system_prompt},
         {"role": "user", "content": f"Course content: {course.content}\nPlease analyze and return the content that needs to be covered."}
     ]
 
     # Get filtered content
     filtered_content = llm_caller.generate_response(messages, system_prompt)
+
+    print("generate_course: 3")
 
     # Prepare prompt for chapter generation
     system_prompt = """You are an expert course creator. Split the course content into logical chapters.
@@ -49,13 +56,15 @@ def generate_course(user, course):
     }"""
 
     messages = [
-        {"role": "system", "content": system_prompt},
         {"role": "user", "content": f"Please split this content into chapters: {filtered_content}"}
     ]
 
     # Get chapters structure
-    chapters_json = llm_caller.generate_response(messages, system_prompt)
+    chapters_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
+    print(f"generate_course: json: {chapters_json}")
     chapters_data = json.loads(chapters_json)
+
+    print("generate_course: 4")
 
     # Generate each chapter
     for chapter_data in chapters_data['chapters']:

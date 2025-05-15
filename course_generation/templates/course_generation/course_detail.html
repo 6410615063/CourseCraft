@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'course_generation:course_list' %}">Courses</a></li>
@@ -9,50 +9,49 @@
         </ol>
     </nav>
 
-    <div class="card">
-        <div class="card-body">
-            <h2 class="card-title">{{ course.title }}</h2>
-            <p class="card-text">{{ course.description }}</p>
-            <p class="card-text">
-                <small class="text-muted">Knowledge Level: {{ course.knowledge_level }}</small>
-            </p>
-            <p class="card-text">
-                <small class="text-muted">Created: {{ course.created_at|date:"F j, Y" }}</small>
-            </p>
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-8">
+            <h1>{{ course.title }}</h1>
+            <p class="lead">{{ course.description }}</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Generate Personalized Content</button>
+            </form>
         </div>
     </div>
 
-    <div class="mt-4">
-        <h3>Course Content</h3>
-        <div class="course-content">
-            {% if course.content %}
-                {% for section in course.content.sections %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h4 class="card-title">{{ section.title }}</h4>
-                            <div class="card-text">
-                                {{ section.content|safe }}
-                            </div>
-                            {% if section.exercises %}
-                                <div class="mt-3">
-                                    <h5>Exercises</h5>
-                                    <ul class="list-group">
-                                        {% for exercise in section.exercises %}
-                                            <li class="list-group-item">
-                                                <h6>{{ exercise.title }}</h6>
-                                                <p>{{ exercise.description }}</p>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            {% endif %}
-                        </div>
+    <hr>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <h2>Your Personalized Chapters</h2>
+            {% if chapters %}
+            <div class="list-group">
+                {% for chapter in chapters %}
+                <a href="{% url 'course_generation:chapter_detail' chapter.id %}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ chapter.name }}</h5>
+                        <small>{{ chapter.created_at|date:"M d, Y" }}</small>
                     </div>
+                </a>
                 {% endfor %}
+            </div>
             {% else %}
-                <div class="alert alert-warning">
-                    No content available for this course.
-                </div>
+            <div class="alert alert-info">
+                No chapters generated yet. Click the "Generate Personalized Content" button to start.
+            </div>
             {% endif %}
         </div>
     </div>

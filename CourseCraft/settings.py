@@ -62,7 +62,7 @@ ROOT_URLCONF = 'CourseCraft.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'CourseCraftApp', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

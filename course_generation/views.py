@@ -1,15 +1,18 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from .models import Course, UserKnowledge
+from .models import Course, Chapter, UserKnowledge
+from .generator import generate_course
+from .forms import UserKnowledgeForm
 from llm_integration.llm_caller_3 import LLMCaller
 import json
 
 # Create your views here.
 
 @login_required
-def generate_course(request):
+def generate_course_view(request):
     if request.method == 'POST':
         print("generate_course: form filled")
 
@@ -42,18 +45,12 @@ def generate_course(request):
             course_content = llm_caller.generate_response(messages, system_prompt)
             
             print("generate_course: 3")
-            # print(f"generate_course: {request.user}")
-            # print(f"generate_course: {topic.title()}")
-            # print(f"generate_course: {topic}")
-            # print(f"generate_course: {json.loads(course_content)}")
-            # print(f"generate_course: {knowledge_level}")
 
             # Create new course
             course = Course.objects.create(
                 user=request.user,
                 title=f"{topic.title()} Course",
                 description=f"Personalized course on {topic}",
-                # content=json.loads(course_content),
                 content=course_content,
                 knowledge_level=knowledge_level
             )
@@ -80,10 +77,46 @@ def generate_course(request):
 
 @login_required
 def course_list(request):
-    courses = Course.objects.filter(user=request.user)
+    """Display list of available courses"""
+    courses = Course.objects.all()
     return render(request, 'course_generation/course_list.html', {'courses': courses})
 
 @login_required
 def course_detail(request, course_id):
-    course = Course.objects.get(id=course_id, user=request.user)
-    return render(request, 'course_generation/course_detail.html', {'course': course})
+    """Display course details and allow user to start course generation"""
+    course = get_object_or_404(Course, id=course_id)
+    user = request.user
+    user_chapters = Chapter.objects.filter(user=request.user, course=course)
+    
+    if request.method == 'POST':
+        # Start course generation
+        generate_course(user, course)
+        messages.success(request, 'Course generation started!')
+        return redirect('course_generation:course_detail', course_id=course.id)
+    
+    return render(request, 'course_generation/course_detail.html', {
+        'course': course,
+        'chapters': user_chapters
+    })
+
+@login_required
+def chapter_detail(request, chapter_id):
+    """Display chapter content"""
+    chapter = get_object_or_404(Chapter, id=chapter_id, user=request.user)
+    return render(request, 'course_generation/chapter_detail.html', {'chapter': chapter})
+
+@login_required
+def update_knowledge(request):
+    """Update user's knowledge level for a topic"""
+    if request.method == 'POST':
+        form = UserKnowledgeForm(request.POST)
+        if form.is_valid():
+            knowledge = form.save(commit=False)
+            knowledge.user = request.user
+            knowledge.save()
+            messages.success(request, 'Knowledge level updated successfully!')
+            return redirect('course_list')
+    else:
+        form = UserKnowledgeForm()
+    
+    return render(request, 'course_generation/update_knowledge.html', {'form': form})

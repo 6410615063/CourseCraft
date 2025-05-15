@@ -3,9 +3,9 @@ from .models import Course, UserKnowledge, Chapter
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user', 'knowledge_level', 'created_at')
-    list_filter = ('knowledge_level', 'created_at')
-    search_fields = ('title', 'description', 'user__username')
+    list_display = ('title', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('title', 'description')
     date_hierarchy = 'created_at'
 
 @admin.register(Chapter)

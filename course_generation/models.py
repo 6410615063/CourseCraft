@@ -8,12 +8,10 @@ class Course(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.JSONField()  # Store the generated course content
-    knowledge_level = models.CharField(max_length=50)  # e.g., "beginner", "intermediate", "advanced"
+    content = models.JSONField()  # Store the course content that will be used to generate chapters
 
     def __str__(self):
-        return f"{self.title} - {self.user.username}"
+        return self.title
 
 class Chapter(models.Model):
     name = models.CharField(max_length=200)

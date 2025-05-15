@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'course_generation:course_list' %}">Courses</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'course_generation:course_detail' chapter.course.id %}">{{ chapter.course.title }}</a></li>
+            <li class="breadcrumb-item active">{{ chapter.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-12">
+            <h1>{{ chapter.name }}</h1>
+            <div class="chapter-content mt-4">
+                {{ chapter.content|safe }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
