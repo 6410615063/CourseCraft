@@ -25,10 +25,12 @@
             <p class="lead">{{ course.description }}</p>
         </div>
         <div class="col-md-4 text-end">
+            {% if not chapters %}
             <form method="post">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-primary">Generate Personalized Content</button>
             </form>
+            {% endif %}
         </div>
     </div>
 

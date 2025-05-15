@@ -23,7 +23,8 @@ class Chapter(models.Model):
 
     class Meta:
         ordering = ['created_at']
-        unique_together = ['course', 'name']
+        # unique_together = ['course', 'name'] # make it so that 1 course can only have 1 chapter with a name?
+        # 1 course need to have more than 1 chapter with the same name due to multiple users
 
     def __str__(self):
         return f"{self.name} - {self.course.title}"

@@ -61,7 +61,8 @@ def generate_course(user, course):
 
     # Get chapters structure
     chapters_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
-    print(f"generate_course: json: {chapters_json}")
+    # slice output to remove '''json and '''
+    # print(f"generate_course: json: {chapters_json}")
     chapters_data = json.loads(chapters_json)
 
     print("generate_course: 4")
@@ -85,6 +86,9 @@ def generate_chapter(user, course, name, content):
         name: string. chapter's name
         content: string.
     """
+
+    print("generate_chapter: 1")
+
     # Create and save the Chapter object
     chapter = Chapter.objects.create(
         user=user,
@@ -92,6 +96,8 @@ def generate_chapter(user, course, name, content):
         name=name,
         content=content
     )
+
+    print("generate_chapter: done")
     
     return chapter
 
