@@ -133,6 +133,7 @@ You are an expert course creator.
 Your job is to create a chapter of a course.
 The chapter must be short, concise, while still cover everything in the chapter's summary
 Each chapter must cover a different part of the course's content.
+Decorate the content using HTML tags only
 </role>
 
 You will be given the following as input:
