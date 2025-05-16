@@ -89,7 +89,7 @@ class LLMCaller:
                     "temperature": 0.7,
                     "top_p": 0.8,
                     "top_k": 40,
-                    "max_output_tokens": 300,
+                    "max_output_tokens": 1000,
                 },
                 "systemInstruction": {
                     "role": "",
