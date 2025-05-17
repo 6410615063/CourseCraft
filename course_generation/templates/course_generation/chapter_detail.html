@@ -12,11 +12,12 @@
 
     <div class="row">
         <div class="col-12">
-            <!-- <h1>{{ chapter.name }}</h1> -->
             <div class="chapter-content mt-4">
                 {{ chapter.content|safe }}
             </div>
         </div>
     </div>
+
+    <a href="{% url 'exam_and_evaluation:exercise' chapter.id %}" class="btn btn-primary mt-4">Start Exercise</a>
 </div>
 {% endblock %} 

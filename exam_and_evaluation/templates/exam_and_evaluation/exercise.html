@@ -1,21 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exercise - {{ chapter_name }}</title>
-</head>
-<body>
-    <h1>Exercise - {{ chapter_name }}</h1>
-    <form method="post">
-    {% csrf_token %}
-    {% for question in questions %}
-        <div>
-            <h2>{{ question.text }}</h2>
-            <input type="text" name="answer_{{ question.id }}" placeholder="Your answer here">
+{% extends 'base.html' %}
+
+{% block title %}Exercise - {{ chapter_name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title mb-4 text-center">Exercise - {{ chapter_name }}</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for question in questions %}
+                            <div class="mb-4">
+                                <label class="form-label fw-bold" for="answer_{{ question.id }}">
+                                    {{ forloop.counter }}. {{ question.text }}
+                                </label>
+                                <input type="text"
+                                       id="answer_{{ question.id }}"
+                                       name="answer_{{ question.id }}"
+                                       class="form-control"
+                                       placeholder="Your answer here"
+                                       required>
+                            </div>
+                        {% endfor %}
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Submit Answers</button>
+                        </div>
+                    </form>
+                    <a href="{% url 'course_generation:chapter_detail' chapter_id %}" class="btn btn-secondary mt-3">Back to Chapter</a>
+                </div>
+            </div>
         </div>
-    {% endfor %}
-        <input type="submit" value="Submit">
-    </form>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}
