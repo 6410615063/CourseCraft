@@ -12,3 +12,16 @@ tset2345
 TODO: adjust Course model
 - Remove user and knowledge_level fields
 - explaination: For now, a Course object will only be used for holding its content, which is used when creating chapters
+
+I need to make a system for:
+<goal>
+- Display Exam & Exercise for user to answer (user will enter the Exam through the course page, and enter the Exercise through the Chapter page)
+- Extract & Grade user's answers for the Exam/Exercise
+- Determine user's knowledge based on their Exam/Exercise result 
+</goal>
+
+Based on the requirement document and the current structure of the project, how should I implement the system mentioned above?
+<choice>
+1) Make a seperate django app for displaying & grading Exam/Exercise, and determining user's knowledge
+2) Make the system(urls, views, templates, other required functions) for displaying & grading Exam/Exercise, and determining user's knowledge inside one of the exist apps
+</choice>

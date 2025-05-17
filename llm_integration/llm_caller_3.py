@@ -19,7 +19,7 @@ class LLMCaller:
         self.credentials = self._get_credentials()
         self.request = google.auth.transport.requests.Request()
         self.last_call_time = 0
-        self.min_interval = 1  # Minimum time between API calls in seconds
+        self.min_interval = 13  # Minimum time between API calls in seconds
         self.model_id = "gemini-2.0-flash-001"
 
     def _get_project_id(self) -> str:

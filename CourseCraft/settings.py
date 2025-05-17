@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'llm_integration',  # Our new app
     'course_generation',  # Course generation app
     'authentication',  # Authentication app
+    'exam_and_evaluation',  # Exam and evaluation app
 ]
 
 MIDDLEWARE = [

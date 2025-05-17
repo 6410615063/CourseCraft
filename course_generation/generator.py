@@ -1,6 +1,7 @@
 # have all functions relate to generating Chapters, Exam, and Exercise
 
-from .models import Course, Chapter, UserKnowledge
+from .models import Course, Chapter, UserKnowledge, Question, Exercise
+from django.contrib.auth.models import User
 from llm_integration.llm_caller_3 import LLMCaller
 import json
 
@@ -199,10 +200,109 @@ def generate_chapter(user, course, name, content):
         content=content
     )
 
+    print("generate_chapter: 2")
+    
+    # create exercise for the chapter
+    generate_exercise(chapter)
+
     print("generate_chapter: done")
     print(f"content: {content}")
     
     return chapter
 
-def generate_exercise():
+def generate_question(text, golden_answer, type):
+    """
+    Generate a question object of an exam/exercise, which include:
+        text: the question text
+        golden answer
+        question type: exam or exercise
+    """
+
+    # Create Question object
+    question = Question.objects.create(
+        text=text,
+        golden_answer=golden_answer,
+        question_type=type
+    )
+
+    return question
+
+def generate_exercise(chapter):
+    """
+    Generate an exercise object of a chapter, which include:
+        questions
+        golden answers
+    """
+
+    # Initialize LLM caller
+    llm_caller = LLMCaller()
+
+    # get chapter's name & content
+    chapter_name = chapter.name
+    chapter_content = chapter.content
+
+    # Generate questions and answers using LLM
+    system_prompt_3 = """"
+<role>
+You are an expert course creator.
+Your job is to create a set of questions and answers for a chapter of a course.
+Each question is an open question, and the answer is a short text.
+The questions must be related to the chapter's content.
+The combination of questions must cover the entire content of the chapter.
+</role>
+
+You will be given the following as input:
+<input>
+- Name of the chapter, inside the <name> tags
+- The entire text content of the chapter, inside the <content> tags
+</input>
+
+Return the response in the following JSON format:
+{
+    "questions": [
+        {
+            "question_text": "The text of the question",
+            "golden_answer": "The best answer to the question"
+        }
+    ]
+}
+"""
+
+    messages_3 = [
+        {
+            "role": "user", "content": f"""
+<name>{chapter_name}</name>
+<content>{chapter_content}</content>
+"""
+        }
+    ]
+
+    # Get questions and answers
+    exercise_json = llm_caller.generate_response(messages_3, system_prompt_3)[7:-3]
+    exercise_data = json.loads(exercise_json)
+
+    # Create the Exercise object
+    exercise = Exercise.objects.create(
+        chapter=chapter
+    )
+
+    questions = exercise_data['questions']
+    # Create and save each Question object
+    for question_data in questions:
+        question_text = question_data['question_text']
+        golden_answer = question_data['golden_answer']
+
+        # Create Question object
+        question = generate_question(
+            text=question_text,
+            golden_answer=golden_answer,
+            type='EXERCISE'
+        )
+        question.save()
+
+        # Add the question to the Exercise object
+        exercise.questions.add(question)
+
+    # Save the Exercise object
+    exercise.save()
     return None

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise - {{ chapter_name }}</title>
+</head>
+<body>
+    <h1>Exercise - {{ chapter_name }}</h1>
+    <form method="post">
+    {% csrf_token %}
+    {% for question in questions %}
+        <div>
+            <h2>{{ question.text }}</h2>
+            <input type="text" name="answer_{{ question.id }}" placeholder="Your answer here">
+        </div>
+    {% endfor %}
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
