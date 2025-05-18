@@ -170,6 +170,11 @@ def split_into_chapters(content):
 
     Input:
     content: string. The entire text content of the course
+
+    Output:
+    chapters: list of dictionaries. Each dictionary contains:
+        - name: string. The name of the chapter
+        - content: string. The content of the chapter
     """
 
     # Initialize LLM caller
@@ -233,6 +238,7 @@ You are an expert course creator.
 Your job is to create a chapter of a course.
 The chapter should be short and cocise
 The chapter must cover everything in the chapter's summary
+Decorate the content using HTML tags only
 </role>
 
 You will be given the following as input:
@@ -275,163 +281,34 @@ def generate_course(user, course):
     course: course object. to get content from & assign chapters to
     """
 
+    # summarize the course content
+    course_content = course.content
+    course_summary = summarize(course_content)
+
     print("generate_course: 1")
 
-    # Initialize LLM caller
-    llm_caller = LLMCaller()
-
-    # Get user's knowledge for the course topic
-    user_knowledge = UserKnowledge.objects.filter(
-        user=user,
-        topic=course.title
-    ).first()
+    # filter the course content based on the user's knowledge
+    user_knowledge = UserKnowledge.objects.filter(user=user).first()
+    filtered_summary = filter_knowledge(course_summary, user_knowledge.knowledge_list if user_knowledge else [])
 
     print("generate_course: 2")
 
-    # Prepare the prompt for content filtering
-    # skipped until user knowledge is fixed
-    # system_prompt = f"""You are an expert course creator. Analyze the course content and user's knowledge level to determine what content needs to be covered.
-    # User's current knowledge level: {user_knowledge.knowledge_level if user_knowledge else 'beginner'}"""
-
-    # messages = [
-    #     {"role": "user", "content": f"Course content: {course.content}\nPlease analyze and return the content that needs to be covered."}
-    # ]
-
-    # # Get filtered content
-    # filtered_content = llm_caller.generate_response(messages, system_prompt)
-    filtered_content = course.content
+    # split the course content into chapters
+    chapters = split_into_chapters(filtered_summary)
 
     print("generate_course: 3")
 
-    # Prepare prompt for chapter generation
-    system_prompt = """
-<role>
-You are an expert course creator. 
-Split the course content into logical chapters.
-Each chapter must cover a different part of the course's content.
-</role>
-
-Return the response in the following JSON format:
-{
-    "chapters": [
-        {
-            "name": "Chapter name",
-            "content": "A short list of the content of this Chapter. Just enough that an expert at this subject will understand what this chapter is about."
-        }
-    ]
-}
-"""
-# "content": "A short summary of the content of this Chapter. Just enough that an expert at this subject will understand what this chapter is about."
-    messages = [
-        {"role": "user", "content": f"Please split this content into chapters: {filtered_content}"}
-    ]
-
-    # Get chapters structure
-    chapters_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
-    # slice output to remove '''json and '''
-    # print(f"generate_course: json: {chapters_json}")
-    chapters_data = json.loads(chapters_json)
-
-    print("generate_course: 4")
-
     # Generate each chapter
-    chapters = chapters_data['chapters']
-    chapter_count = len(chapters)
-    for index, chapter_data in enumerate(chapters, start=1):
-        # index = index inside chapters[]+1
+    for chapter_data in chapters:
 
         chapter_name = chapter_data['name']
         chapter_summary = chapter_data['content']
         
-        # check if the next chapter exist
-        has_next_chapter = index < chapter_count
-        system_prompt_prev_chapter = ""
-        system_prompt_next_chapter = ""
-        message_prev_chapter = ""
-        message_next_chapter = ""
-        if has_next_chapter:
-            next_chapter = chapters[index]
-            next_chapter_summary = next_chapter['content']
-            system_prompt_next_chapter = "- Summary of the next chapter, inside the <next_summary> tags"
-            message_next_chapter = f"<next_summary>{next_chapter_summary}</next_summary>"
+        # Generate chapter content
+        chapter_content = generate_chapter(chapter_name, chapter_summary)
 
-        # check if the prev chapter exist
-        has_prev_chapter = index > 0
-        if has_prev_chapter:
-            prev_chapter = chapters[index - 2]
-            prev_chapter_summary = prev_chapter['content']
-            system_prompt_prev_chapter = "- Summary of the previous chapter, inside the <prev_summary> tags"
-            message_prev_chapter = f"<prev_summary>{prev_chapter_summary}</prev_summary>"
-
-        output_format = """
-{
-    "content": "the entire text content of the chapter"
-}
-"""
-
-# <role>
-# You are an expert course creator.
-# Your job is to create a chapter of a course.
-# The chapter must be short, concise, while still cover everything in the chapter's summary
-# Each chapter must cover a different part of the course's content.
-# </role>
-
-# You will be given the following as input:
-# <input>
-# - The entire text content of the course, inside to <full_content> tags
-# - Name of the chapter, inside the <name> tags
-# - Summary of the chapter, inside the <summary> tags
-# {system_prompt_prev_chapter}
-# {system_prompt_next_chapter}
-# </input>
-
-        system_prompt_2 = f"""
-<role>
-You are an expert course creator.
-Your job is to create a chapter of a course.
-The chapter must be short, concise, while still cover everything in the chapter's summary
-Each chapter must cover a different part of the course's content.
-Decorate the content using HTML tags only
-</role>
-
-You will be given the following as input:
-<input>
-- Name of the chapter, inside the <name> tags
-- Summary of the chapter, inside the <summary> tags
-{system_prompt_prev_chapter}
-{system_prompt_next_chapter}
-</input>
-
-You must output the text content of the chapter
-Return the response in the following JSON format:
-{output_format}
-"""
-
-# """
-# <full_content>{filtered_content}</full_content>
-# <name>{chapter_name}</name>
-# <summary>{chapter_summary}</summary>
-# {message_prev_chapter}
-# {message_next_chapter}
-# """
-
-        messages_2 = [
-            {
-                "role": "user", "content": f"""
-<name>{chapter_name}</name>
-<summary>{chapter_summary}</summary>
-{message_prev_chapter}
-{message_next_chapter}
-"""
-            }
-        ]
-
-        chapter_json = llm_caller.generate_response(messages_2, system_prompt_2)[7:-3]
-        chapter_data_2 = json.loads(chapter_json)
-
-        create_chapter(user, course, chapter_name, chapter_data_2['content'])
-
-    return course
+        # Create and save the Chapter object
+        create_chapter(user, course, chapter_name, chapter_content)
 
 def create_chapter(user, course, name, content):
     """
@@ -486,47 +363,44 @@ def generate_extra_chapter(user, course, target_unknown):
     # 3. split it into chapters
     # 4. generate each chapter
 
-    # Get the course content
+    # summarize the course content
     course_content = course.content
-    # Turn the list of unknowns into a string
-    target_unknown_str = ', '.join(target_unknown)
+    course_summary = summarize(course_content)
 
-    # Initialize LLM caller
-    llm_caller = LLMCaller()
+    print("generate_extra: 1")
+    print(f"target unknown = {target_unknown}")
+    print(f"course_summary = {course_summary}")
 
-    # cut the course content to the unknowns
-    # Prepare the prompt for extra chapter generation
-    system_prompt = f"""
-<role>
-You are an expert course creator.
-Your job is to filter the text content of a course, only leaving the content related to the target subjects.
-</role>
+    # filter the course content based on the user's knowledge and unknowns
+    user_knowledge = UserKnowledge.objects.filter(user=user).first()
+    filtered_summary = filter_knowledge(course_summary, user_knowledge.knowledge_list if user_knowledge else [])
 
-You will be given the following as input:
-<input>
-- The entire text content of the course, inside the <full_content> tags
-- The list of target subjects, inside the <target_sunjects> tags
-</input>
+    print(f"filtered(knowledge) = {filtered_summary}")
 
-Return the response in the following JSON format:
-{
-    "content": "the filtered text content, contain only the content related to the target subjects"
-}
-"""
+    filtered_summary = filter_unknown(filtered_summary, target_unknown)
 
-    messages = [
-        {
-            "role": "user", "content": f"""
-<full_content>{course_content}</full_content>
-<target_subjects>{target_unknown_str}</target_subjects>
-"""
-        }
-    ]
+    print(f"filtered(unknown) = {filtered_summary}")
 
-    # Get filtered content
-    filtered_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
-    filtered_data = json.loads(filtered_json)
-    filtered_content = filtered_data['content']
+    print("generate_extra: 2")
+
+    # split the course content into chapters
+    chapters = split_into_chapters(filtered_summary)
+
+    print(f"chapters_list = {chapters}")
+
+    print("generate_extra: 3")
+
+    # Generate each chapter
+    for chapter_data in chapters:
+
+        chapter_name = f"Extra: {chapter_data['name']}"
+        chapter_summary = chapter_data['content']
+        
+        # Generate chapter content
+        chapter_content = generate_chapter(chapter_name, chapter_summary)
+
+        # Create and save the Chapter object
+        create_chapter(user, course, chapter_name, chapter_content)
 
 def generate_question(text, golden_answer, type):
     """

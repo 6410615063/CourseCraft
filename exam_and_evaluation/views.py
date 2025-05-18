@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from course_generation.models import Course, Chapter, UserKnowledge, Question, Exercise
 from django.contrib.auth.decorators import login_required
 from exam_and_evaluation.evaluate_answer import *
+from course_generation.generator import generate_extra_chapter
 
 # Create your views here.
 
@@ -60,16 +61,15 @@ def exercise_view(request, chapter_id):
 
             # Update user knowledge
             user_knowledge = UserKnowledge.objects.filter(user=request.user).first()
-            if user_knowledge:
-                user_knowledge.knowledge_list.extend(knowledge_list)
-                user_knowledge.unknown_list.extend(unknown_list)
-                user_knowledge.save()
-            else:
-                UserKnowledge.objects.create(
+            if not user_knowledge:
+                user_knowledge = UserKnowledge.objects.create(
                     user=request.user,
                     knowledge_list=knowledge_list,
                     unknown_list=unknown_list
                 )
+            user_knowledge.knowledge_list.extend(knowledge_list)
+            user_knowledge.unknown_list.extend(unknown_list)
+            user_knowledge.save()
             update_user_knowledge(user_knowledge)
 
             # Determine if extra chapter is needed
@@ -80,10 +80,22 @@ def exercise_view(request, chapter_id):
         # Check if extra chapter is needed
         if unknown_list_for_extra_chapter:
             # Generate extra chapter based on unknown_list
-            # extra_chapter = generate_extra_chapter(request.user, unknown_list_for_extra_chapter)
-            pass
-    # Logic to display the exercise page
 
+            print("Generating Extra Chapter")
+
+            # Get the course associated with the chapter
+            course = chapter.course
+            user = request.user
+
+            # Generate extra chapter using the unknown_list
+            generate_extra_chapter(user, course, unknown_list_for_extra_chapter)
+        else:
+            print("No Extra Chapter required")
+    
+        # redirect to the course detail page
+        return redirect('course_generation:course_detail', course_id=chapter.course.id)
+
+    # If GET request, display the exercise page
     context = {
         'chapter_name': chapter_name,
         'chapter_id': chapter_id,

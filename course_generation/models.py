@@ -39,7 +39,7 @@ class UserKnowledge(models.Model):
         unique_together = ('user',)
 
     def __str__(self):
-        return f"{self.user.username} - Have: {len(self.knowledge_have)} / Not have: {len(self.knowledge_not_have)}"
+        return f"{self.user.username}"
 
 class Question(models.Model):
     QUESTION_TYPE_CHOICES = [

@@ -175,8 +175,16 @@ def update_user_knowledge(user_knowledge):
         None
     """
 
+    print("Updating User's knowledge database")
+
     knowledge_list = user_knowledge.knowledge_list
     unknown_list = user_knowledge.unknown_list
+
+    print(f"""
+Current list:
+Knowledge = {knowledge_list}
+Unknown = {unknown_list}
+""")
 
     # do it manually first to reduce amount of LLM input
     # remove duplicates
@@ -252,3 +260,9 @@ Here are the criteria to determine the knowledge and unknown:
     user_knowledge.knowledge_list = knowledge_list
     user_knowledge.unknown_list = unknown_list
     user_knowledge.save()
+
+    print(f"""
+Updated list:
+Knowledge = {knowledge_list}
+Unknown = {unknown_list}
+""")
