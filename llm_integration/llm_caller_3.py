@@ -11,6 +11,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Global variable for last_call_time
+GLOBAL_LAST_CALL_TIME = 0
+
 class LLMCaller:
     def __init__(self):
         self.service_account_name = "service_account_key.json"
@@ -18,8 +21,8 @@ class LLMCaller:
         self.project_id = self._get_project_id()
         self.credentials = self._get_credentials()
         self.request = google.auth.transport.requests.Request()
-        self.last_call_time = 0
-        self.min_interval = 13  # Minimum time between API calls in seconds
+        # Remove self.last_call_time
+        self.min_interval = 12  # Minimum time between API calls in seconds
         self.model_id = "gemini-2.0-flash-001"
 
     def _get_project_id(self) -> str:
@@ -55,11 +58,19 @@ class LLMCaller:
 
     def _rate_limit(self):
         """Implement rate limiting between API calls."""
+        global GLOBAL_LAST_CALL_TIME
         current_time = time.time()
-        time_since_last_call = current_time - self.last_call_time
+        time_since_last_call = current_time - GLOBAL_LAST_CALL_TIME
+        print(f"""
+Current time: {current_time:.2f}
+Last call time: {GLOBAL_LAST_CALL_TIME:.2f}
+Time since last call: {time_since_last_call:.2f} seconds
+""")
+        # If the time since the last call is less than the minimum interval, wait
         if time_since_last_call < self.min_interval:
+            print(f"Rate limiting: waiting for {self.min_interval - time_since_last_call:.2f} seconds")
             time.sleep(self.min_interval - time_since_last_call)
-        self.last_call_time = time.time()
+        GLOBAL_LAST_CALL_TIME = time.time()
 
     def _make_api_call(self, messages: List[Dict[str, str]], system_prompt: str) -> str:
         """Make API call to Google Cloud Vertex AI."""
@@ -131,6 +142,7 @@ class LLMCaller:
             return ""
         except Exception as e:
             logger.error(f"Error converting response: {e}")
+            print(f"Error converting response: {e}")
             raise
 
     def generate_response(self, messages: List[Dict[str, str]], system_prompt: str) -> str:
@@ -139,4 +151,5 @@ class LLMCaller:
             return self._make_api_call(messages, system_prompt)
         except Exception as e:
             logger.error(f"Error generating response: {e}")
+            print(f"Error generating response: {e}")
             raise

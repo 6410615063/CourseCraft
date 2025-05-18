@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from course_generation.models import Course, Chapter, UserKnowledge, Question, Exercise
 from django.contrib.auth.decorators import login_required
-from exam_and_evaluation.evaluate_answer import evaluate_answer, evaluate_answer2
+from exam_and_evaluation.evaluate_answer import *
 
 # Create your views here.
 
@@ -58,6 +58,13 @@ def exercise_view(request, chapter_id):
                 pass
             score = evaluate_answer2(question, user_answer)
             print(f"Score: {score}")
+
+            # determine user's knowledge
+            knowledge_json = determine_knowledge(question, user_answer, score)
+            knowledge_list = knowledge_json['knowledge']
+            print(f"Knowledge: {knowledge_list}")
+            unknown_list = knowledge_json['unknown']
+            print(f"Unknown: {unknown_list}")
 
         # Validate and grade the exercise
         pass
