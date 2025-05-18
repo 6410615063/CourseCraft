@@ -5,6 +5,263 @@ from django.contrib.auth.models import User
 from llm_integration.llm_caller_3 import LLMCaller
 import json
 
+def summarize(content):
+    """
+    Summarize the given content.
+    This function will:
+    1. Analyze the course content
+    2. Generate a summary
+    3. Return the summary
+
+    Input:
+    content: string. The entire text of the content
+    """
+
+    # Initialize LLM caller
+    llm_caller = LLMCaller()
+
+    # Prepare the prompt for summarization
+    system_prompt = """
+<role>
+You are an expert summarizer.
+Your job is to summarize the given text content.
+The summary should not be too long, while still cover everything in the content.
+</role>
+
+You will be given the following as input:
+<input>
+- The entire text content, inside the <full_content> tags
+</input>
+
+Return the response in the following JSON format:
+{
+    "summary": "the summary of the content"
+}
+"""
+
+    messages = [
+        {"role": "user", "content": f"""
+<full_content>{content}</full_content>
+"""
+        }
+    ]
+
+    # Get summary
+    summary_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
+    summary_data = json.loads(summary_json)
+    summary = summary_data['summary']
+    
+    return summary
+
+def filter_knowledge(summary, knowledge_list):
+    """
+    Filter the course summary based on the user's knowledge list.
+    This function will:
+    1. Analyze the course summary
+    2. Remove the content that is already known by the user
+    3. Return the filtered summary
+
+    Input:
+    summary: string. The entire text of the course summary
+    knowledge_list: list of strings. The user's knowledge list
+    """
+
+    # Turn the list of knowledge into a string
+    knowledge_list_str = ', '.join(knowledge_list)
+
+    # Initialize LLM caller
+    llm_caller = LLMCaller()
+
+    # Prepare the prompt for filtering
+    system_prompt = """
+<role>
+You are an expert course filter.
+Your job is to filter the course summary based on the user's knowledge list.
+The filtered summary should not include the content that is already known by the user.
+</role>
+
+You will be given the following as input:
+<input>
+- The entire text content of the course summary, inside the <full_content> tags
+- The user's knowledge list, inside the <knowledge_list> tags
+</input>
+
+Return the response in the following JSON format:
+{
+    "filtered_summary": "the filtered summary of the course"
+}
+"""
+
+    messages = [
+        {"role": "user", "content": f"""
+<full_content>{summary}</full_content>
+<knowledge_list>{knowledge_list_str}</knowledge_list>
+"""
+        }
+    ]
+
+    # Get filtered summary
+    filtered_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
+    filtered_data = json.loads(filtered_json)
+    filtered_summary = filtered_data['filtered_summary']
+    
+    return filtered_summary
+
+def filter_unknown(summary, unknown_list):
+    """
+    Filter the course summary based on the user's unknown list.
+    This function will:
+    1. Analyze the course summary
+    2. Keep only the content that is related to the unknown list
+    3. Return the filtered summary
+
+    Input:
+    summary: string. The entire text of the course summary
+    unknown_list: list of strings. The user's unknown list
+    """
+
+    # Turn the list of unknown into a string
+    unknown_list_str = ', '.join(unknown_list)
+
+    # Initialize LLM caller
+    llm_caller = LLMCaller()
+
+    # Prepare the prompt for filtering
+    system_prompt = """
+<role>
+You are an expert course filter.
+Your job is to filter the course summary based on the user's unknown list.
+The filtered summary should only include the content that is related to the unknown list.
+</role>
+
+You will be given the following as input:
+<input>
+- The entire text content of the course summary, inside the <full_content> tags
+- The user's unknown list, inside the <unknown_list> tags
+</input>
+
+Return the response in the following JSON format:
+{
+    "filtered_summary": "the filtered summary of the course"
+}
+"""
+
+    messages = [
+        {"role": "user", "content": f"""
+<full_content>{summary}</full_content>
+<unknown_list>{unknown_list_str}</unknown_list>
+"""
+        }
+    ]
+
+    # Get filtered summary
+    filtered_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
+    filtered_data = json.loads(filtered_json)
+    filtered_summary = filtered_data['filtered_summary']
+    return filtered_summary
+
+def split_into_chapters(content):
+    """
+    Split the course content into chapters.
+    This function will:
+    1. Analyze the content
+    2. Split it into logical chapters
+    3. Return the chapters structure
+
+    Input:
+    content: string. The entire text content of the course
+    """
+
+    # Initialize LLM caller
+    llm_caller = LLMCaller()
+
+    # Prepare the prompt for chapter generation
+    system_prompt = """
+<role>
+You are an expert course creator. 
+Split the course content into logical chapters.
+Each chapter must cover a different part of the course's content.
+</role>
+
+You will be given the following as input:
+<input>
+- The entire text content of the course, inside the <full_content> tags
+</input>
+
+Return the response in the following JSON format:
+{
+    "chapters": [
+        {
+            "name": "Chapter name",
+            "content": "A short list of the content of this Chapter. Just enough that an expert at this subject will understand what this chapter is about."
+        }
+    ]
+}
+"""
+
+    messages = [
+        {"role": "user", "content": f"""
+<full_content>{content}</full_content>
+"""
+        }
+    ]
+
+    # Get chapters structure
+    chapters_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
+    # slice output to remove '''json and '''
+    # print(f"generate_course: json: {chapters_json}")
+    chapters_data = json.loads(chapters_json)
+    chapters = chapters_data['chapters']
+    return chapters
+
+def generate_chapter(name, summary):
+    """
+    Generate content of a chapter.
+
+    Input:
+    name: string. The name of the chapter
+    summary: string. The summary of the chapter
+    """
+
+    # Initialize LLM caller
+    llm_caller = LLMCaller()
+
+    # Prepare the prompt for chapter generation
+    system_prompt = """
+<role>
+You are an expert course creator.
+Your job is to create a chapter of a course.
+The chapter should be short and cocise
+The chapter must cover everything in the chapter's summary
+</role>
+
+You will be given the following as input:
+<input>
+- Name of the chapter, inside the <name> tags
+- Summary of the chapter, inside the <summary> tags
+</input>
+
+Return the response in the following JSON format:
+{
+    "content": "the entire text content of the chapter"
+}
+"""
+    
+    messages = [
+        {"role": "user", "content": f"""
+<name>{name}</name>
+<summary>{summary}</summary>
+"""
+        }
+    ]
+
+    # Get chapter content
+    chapter_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
+    chapter_data = json.loads(chapter_json)
+    chapter_content = chapter_data['content']
+    
+    return chapter_content
+
 def generate_course(user, course):
     """
     Generate personalized chapters for a user based on a course's content.
@@ -172,11 +429,11 @@ Return the response in the following JSON format:
         chapter_json = llm_caller.generate_response(messages_2, system_prompt_2)[7:-3]
         chapter_data_2 = json.loads(chapter_json)
 
-        generate_chapter(user, course, chapter_name, chapter_data_2['content'])
+        create_chapter(user, course, chapter_name, chapter_data_2['content'])
 
     return course
 
-def generate_chapter(user, course, name, content):
+def create_chapter(user, course, name, content):
     """
     Goal:
         Generate a chapter object of a course, which include:
@@ -209,6 +466,67 @@ def generate_chapter(user, course, name, content):
     print(f"content: {content}")
     
     return chapter
+
+def generate_extra_chapter(user, course, target_unknown):
+    """
+    Goal:
+        Generate chapter object(s) of a course, which include:
+        pages of content
+        exercise
+
+    Input:
+        user: user obj. chapter owner
+        course: course obj. chapter owner
+        target_unknown: list of unknowns to cover in the extra chapter
+    """
+
+    # plan
+    # 1. get the course content
+    # 2. cut it down to the unknowns
+    # 3. split it into chapters
+    # 4. generate each chapter
+
+    # Get the course content
+    course_content = course.content
+    # Turn the list of unknowns into a string
+    target_unknown_str = ', '.join(target_unknown)
+
+    # Initialize LLM caller
+    llm_caller = LLMCaller()
+
+    # cut the course content to the unknowns
+    # Prepare the prompt for extra chapter generation
+    system_prompt = f"""
+<role>
+You are an expert course creator.
+Your job is to filter the text content of a course, only leaving the content related to the target subjects.
+</role>
+
+You will be given the following as input:
+<input>
+- The entire text content of the course, inside the <full_content> tags
+- The list of target subjects, inside the <target_sunjects> tags
+</input>
+
+Return the response in the following JSON format:
+{
+    "content": "the filtered text content, contain only the content related to the target subjects"
+}
+"""
+
+    messages = [
+        {
+            "role": "user", "content": f"""
+<full_content>{course_content}</full_content>
+<target_subjects>{target_unknown_str}</target_subjects>
+"""
+        }
+    ]
+
+    # Get filtered content
+    filtered_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
+    filtered_data = json.loads(filtered_json)
+    filtered_content = filtered_data['content']
 
 def generate_question(text, golden_answer, type):
     """

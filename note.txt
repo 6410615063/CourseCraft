@@ -9,19 +9,32 @@ tset1234
 testuser2
 tset2345
 
-TODO: adjust Course model
-- Remove user and knowledge_level fields
-- explaination: For now, a Course object will only be used for holding its content, which is used when creating chapters
+TODO: figuring out chapter/extra chapter generation system
 
-I need to make a system for:
-<goal>
-- Display Exam & Exercise for user to answer (user will enter the Exam through the course page, and enter the Exercise through the Chapter page)
-- Extract & Grade user's answers for the Exam/Exercise
-- Determine user's knowledge based on their Exam/Exercise result 
-</goal>
+have: full course content
 
-Based on the requirement document and the current structure of the project, how should I implement the system mentioned above?
-<choice>
-1) Make a seperate django app for displaying & grading Exam/Exercise, and determining user's knowledge
-2) Make the system(urls, views, templates, other required functions) for displaying & grading Exam/Exercise, and determining user's knowledge inside one of the exist apps
-</choice>
+chapter gen.:
+    get user knowledge as list
+    filter content, remove user's knowledge from it
+        problem: outputing the remaining content might be too big -> exceed token limit -> error
+    gen. summary of chapters using filtered content
+    gen. chapter using summary
+
+
+extra chapter gen.:
+    get user unknown as list
+    filter content, leaving only user's unknown
+        problem: outputing the remaining content might be too big -> exceed token limit -> error
+    gen. summary of chapters using filtered content
+    gen. chapter using summary
+
+solution to problem:
+1. instead of working with full course content, turn it into summary first
+2. split the course content to gurrantee that the output will not exceed token limit
+
+all function needed:
+summarize_course: summariez course content
+filter_knowledge: remove knowledge
+filter_unknown: keep only unknown
+split_content: course_summary -> chapter_summary
+generate_chapter: chapter_summary -> chapter_content
