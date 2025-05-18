@@ -17,9 +17,9 @@ class ChapterAdmin(admin.ModelAdmin):
 
 @admin.register(UserKnowledge)
 class UserKnowledgeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'topic', 'knowledge_level', 'last_updated')
-    list_filter = ('knowledge_level', 'last_updated')
-    search_fields = ('topic', 'user__username')
+    list_display = ('user', 'knowledge_list', 'unknown_list', 'last_updated')
+    list_filter = ('last_updated',)
+    search_fields = ('user__username',)
     date_hierarchy = 'last_updated'
 
 @admin.register(Question)

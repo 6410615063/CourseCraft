@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
+from course_generation.models import UserKnowledge
 
 # Create your views here.
 
@@ -31,6 +32,15 @@ def register_view(request):
             user = form.save()
             login(request, user)
             messages.success(request, 'Registration successful!')
+
+            # Initialize user knowledge
+            UserKnowledge.objects.create(
+                user=user,
+                knowledge_list=[],
+                unknown_list=[],
+                last_updated=None
+            )
+            
             return redirect('course_generation:course_list')
         else:
             messages.error(request, 'Please correct the errors below.')

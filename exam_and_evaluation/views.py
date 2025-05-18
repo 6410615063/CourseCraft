@@ -40,22 +40,14 @@ def exercise_view(request, chapter_id):
         questions = []
 
     if request.method == 'POST':
+        unknown_list_for_extra_chapter = []
         # Handle exercise submission
-
         for question in questions:
             question_id = question.id
             user_answer = request.POST.get(f'answer_{question_id}')
 
             print(f"User answer for question #{question_id}: {user_answer}")
             # Validate the answer
-            if evaluate_answer(question, user_answer):
-                # Correct answer logic
-                print(f"Answered correctly.")
-                pass
-            else:
-                # Incorrect answer logic
-                print(f"Answered incorrectly.")
-                pass
             score = evaluate_answer2(question, user_answer)
             print(f"Score: {score}")
 
@@ -66,9 +58,30 @@ def exercise_view(request, chapter_id):
             unknown_list = knowledge_json['unknown']
             print(f"Unknown: {unknown_list}")
 
-        # Validate and grade the exercise
-        pass
+            # Update user knowledge
+            user_knowledge = UserKnowledge.objects.filter(user=request.user).first()
+            if user_knowledge:
+                user_knowledge.knowledge_list.extend(knowledge_list)
+                user_knowledge.unknown_list.extend(unknown_list)
+                user_knowledge.save()
+            else:
+                UserKnowledge.objects.create(
+                    user=request.user,
+                    knowledge_list=knowledge_list,
+                    unknown_list=unknown_list
+                )
+            update_user_knowledge(user_knowledge)
 
+            # Determine if extra chapter is needed
+            if score < 0.5:
+                # add unknown to the list of unknown to based extra chapter on
+                unknown_list_for_extra_chapter.extend(unknown_list)
+            print("-------------------")
+        # Check if extra chapter is needed
+        if unknown_list_for_extra_chapter:
+            # Generate extra chapter based on unknown_list
+            # extra_chapter = generate_extra_chapter(request.user, unknown_list_for_extra_chapter)
+            pass
     # Logic to display the exercise page
 
     context = {

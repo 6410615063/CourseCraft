@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from .models import Course, Chapter, UserKnowledge
 from .generator import generate_course
-from .forms import UserKnowledgeForm
+# from .forms import UserKnowledgeForm
 from llm_integration.llm_caller_3 import LLMCaller
 import json
 
@@ -105,18 +105,18 @@ def chapter_detail(request, chapter_id):
     chapter = get_object_or_404(Chapter, id=chapter_id, user=request.user)
     return render(request, 'course_generation/chapter_detail.html', {'chapter': chapter})
 
-@login_required
-def update_knowledge(request):
-    """Update user's knowledge level for a topic"""
-    if request.method == 'POST':
-        form = UserKnowledgeForm(request.POST)
-        if form.is_valid():
-            knowledge = form.save(commit=False)
-            knowledge.user = request.user
-            knowledge.save()
-            messages.success(request, 'Knowledge level updated successfully!')
-            return redirect('course_list')
-    else:
-        form = UserKnowledgeForm()
+# @login_required
+# def update_knowledge(request):
+#     """Update user's knowledge level for a topic"""
+#     if request.method == 'POST':
+#         form = UserKnowledgeForm(request.POST)
+#         if form.is_valid():
+#             knowledge = form.save(commit=False)
+#             knowledge.user = request.user
+#             knowledge.save()
+#             messages.success(request, 'Knowledge level updated successfully!')
+#             return redirect('course_list')
+#     else:
+#         form = UserKnowledgeForm()
     
-    return render(request, 'course_generation/update_knowledge.html', {'form': form})
+#     return render(request, 'course_generation/update_knowledge.html', {'form': form})

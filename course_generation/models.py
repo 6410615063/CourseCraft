@@ -31,15 +31,15 @@ class Chapter(models.Model):
 
 class UserKnowledge(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    topic = models.CharField(max_length=200)
-    knowledge_level = models.CharField(max_length=50)
+    knowledge_list = models.JSONField(default=list)      # List of strings: what the user knows
+    unknown_list = models.JSONField(default=list)  # List of strings: what the user does not know
     last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ('user', 'topic')
+        unique_together = ('user',)
 
     def __str__(self):
-        return f"{self.user.username} - {self.topic} ({self.knowledge_level})"
+        return f"{self.user.username} - Have: {len(self.knowledge_have)} / Not have: {len(self.knowledge_not_have)}"
 
 class Question(models.Model):
     QUESTION_TYPE_CHOICES = [

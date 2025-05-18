@@ -61,11 +61,11 @@ class LLMCaller:
         global GLOBAL_LAST_CALL_TIME
         current_time = time.time()
         time_since_last_call = current_time - GLOBAL_LAST_CALL_TIME
-        print(f"""
-Current time: {current_time:.2f}
-Last call time: {GLOBAL_LAST_CALL_TIME:.2f}
-Time since last call: {time_since_last_call:.2f} seconds
-""")
+#         print(f"""
+# Current time: {current_time:.2f}
+# Last call time: {GLOBAL_LAST_CALL_TIME:.2f}
+# Time since last call: {time_since_last_call:.2f} seconds
+# """)
         # If the time since the last call is less than the minimum interval, wait
         if time_since_last_call < self.min_interval:
             print(f"Rate limiting: waiting for {self.min_interval - time_since_last_call:.2f} seconds")

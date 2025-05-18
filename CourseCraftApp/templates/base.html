@@ -33,9 +33,6 @@
                         <a class="nav-link" href="{% url 'course_generation:course_list' %}">Courses</a>
                     </li>
                     {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'course_generation:update_knowledge' %}">Update Knowledge</a>
-                    </li>
                     {% endif %}
                 </ul>
                 <ul class="navbar-nav">

@@ -1,5 +1,5 @@
 import json
-from course_generation.models import Question, Exercise
+from course_generation.models import Question, Exercise, UserKnowledge
 from llm_integration.llm_caller_3 import LLMCaller
 
 def evaluate_answer(question, answer):
@@ -89,7 +89,8 @@ Use the following criteria to determine the score:
     # print the explanation
     explanation = score_data.get('explanation', '')
     if explanation:
-        print(f"LLM Explanation: {explanation}")
+        # print(f"LLM Explanation: {explanation}")
+        pass
     
     return score
 
@@ -162,3 +163,92 @@ Both knowledge and unknown could be empty.
         "knowledge": knowledge,
         "unknown": unknown
     }
+
+def update_user_knowledge(user_knowledge):
+    """
+    Update the user's knowledge list after adding new knowledge & unknown.
+    
+    Args:
+        user_knowledge (UserKnowledge): The user's knowledge, has the knowledge_list and unknown_list.
+    
+    Returns:
+        None
+    """
+
+    knowledge_list = user_knowledge.knowledge_list
+    unknown_list = user_knowledge.unknown_list
+
+    # do it manually first to reduce amount of LLM input
+    # remove duplicates
+    knowledge_list = list(set(knowledge_list))
+    unknown_list = list(set(unknown_list))
+    # remove empty strings
+    knowledge_list = [k for k in knowledge_list if k]
+    unknown_list = [u for u in unknown_list if u]
+    # remove unknown that is already in knowledge
+    unknown_list = [u for u in unknown_list if u not in knowledge_list]
+
+    # now do it with LLM
+    # initialize LLM caller
+    llm_caller = LLMCaller()
+
+    # Turn the lists into strings
+    knowledge_list_str = ', '.join(knowledge_list)
+    unknown_list_str = ', '.join(unknown_list)
+
+    # Prepare the prompt for the LLM
+    system_prompt = """
+<role>
+You are an expert evaluator.
+Your job is to simplify the user's knowledge list and unknown list.
+</role>
+
+You will be given the following as input:
+<input>
+- The user's knowledge list, inside the <knowledge_list> tags
+- The user's unknown list, inside the <unknown_list> tags
+</input>
+
+Return the response in the following JSON format:
+{
+    "knowledge_list": [
+        "a short string of what the user knows"
+    ],
+    "unknown_list": [
+        "a short string of what the user doesn't know"
+    ]
+}
+
+Here are the criteria to determine the knowledge and unknown:
+<criteria>
+- neither list should have duplicates or empty strings
+- if something is in both lists, it should be removed from the unknown list
+- if any items in the knowledge list are too similar, they should be merged into one
+- if any items in the unknown list are too similar, they should be merged into one
+</criteria>
+"""
+
+    messages = [
+        {
+            "role": "user", "content": f"""
+<knowledge_list>{knowledge_list_str}</knowledge_list>
+<unknown_list>{unknown_list_str}</unknown_list>
+"""
+        }
+    ]
+
+    # Generate evaluation using LLM
+    knowledge_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
+    knowledge_data = json.loads(knowledge_json)
+
+    # Parse the response to get the knowledge and unknown
+    try:
+        knowledge_list = knowledge_data['knowledge_list']
+        unknown_list = knowledge_data['unknown_list']
+    except KeyError:
+        raise ValueError("Invalid response from LLM. Unable to parse knowledge.")
+
+    # update the user_knowledge object
+    user_knowledge.knowledge_list = knowledge_list
+    user_knowledge.unknown_list = unknown_list
+    user_knowledge.save()
