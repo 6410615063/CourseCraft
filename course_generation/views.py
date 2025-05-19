@@ -17,6 +17,12 @@ def generate_course_view(request):
         print("generate_course: form filled")
 
         try:
+            # TODO: replace the below code with these steps:
+            # get course name(topic) and content(content)
+            # make a course object with name and content
+            # make 2 exam for the course, (is_final=True) and (is_final=False)
+            # redirect to course_list page
+
             data = json.loads(request.body)
             topic = data.get('topic')
             knowledge_level = data.get('knowledge_level')
@@ -88,11 +94,12 @@ def course_detail(request, course_id):
     user = request.user
     user_chapters = Chapter.objects.filter(user=request.user, course=course)
     
+    # TODO: this should get removed once chapter is created after pre exam
     if request.method == 'POST':
-        # Start course generation
-        generate_course(user, course)
-        messages.success(request, 'Course generation started!')
-        return redirect('course_generation:course_detail', course_id=course.id)
+        # Start chapter generation
+        # generate_course(user, course)
+        # messages.success(request, 'Course generation started!')
+        # return redirect('course_generation:course_detail', course_id=course.id)
     
     return render(request, 'course_generation/course_detail.html', {
         'course': course,

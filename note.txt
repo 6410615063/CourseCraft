@@ -9,32 +9,24 @@ tset1234
 testuser2
 tset2345
 
-TODO: figuring out chapter/extra chapter generation system
+TODO: Add a system for admin to add course
 
-have: full course content
-
-chapter gen.:
-    get user knowledge as list
-    filter content, remove user's knowledge from it
-        problem: outputing the remaining content might be too big -> exceed token limit -> error
-    gen. summary of chapters using filtered content
-    gen. chapter using summary
-
-
-extra chapter gen.:
-    get user unknown as list
-    filter content, leaving only user's unknown
-        problem: outputing the remaining content might be too big -> exceed token limit -> error
-    gen. summary of chapters using filtered content
-    gen. chapter using summary
-
-solution to problem:
-1. instead of working with full course content, turn it into summary first
-2. split the course content to gurrantee that the output will not exceed token limit
-
-all function needed:
-summarize_course: summariez course content
-filter_knowledge: remove knowledge
-filter_unknown: keep only unknown
-split_content: course_summary -> chapter_summary
-generate_chapter: chapter_summary -> chapter_content
+(untest)update generate_course_view view
+(done?)update course model
+    (done, inside the exam model)add pre/final exam
+(untest)add function to generate pre/final exam
+(untest)create the exam page
+    (untest, only GET part)view
+    (untest)url
+    (untest)template
+(untest)create a system to handle submiting exam
+    get answers
+    grade answers
+    update knowledge database
+    if pre-course:
+        generate course
+        generate pre/final exams
+    if final:
+        generate extra chapter
+    redirect to course_detail page
+(untest)make the "generate chapter" button lead to the pre-course exam

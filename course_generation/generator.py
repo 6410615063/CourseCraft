@@ -1,6 +1,6 @@
 # have all functions relate to generating Chapters, Exam, and Exercise
 
-from .models import Course, Chapter, UserKnowledge, Question, Exercise
+from .models import Course, Chapter, UserKnowledge, Question, Exercise, Exam
 from django.contrib.auth.models import User
 from llm_integration.llm_caller_3 import LLMCaller
 import json
@@ -22,27 +22,27 @@ def summarize(content):
 
     # Prepare the prompt for summarization
     system_prompt = """
-<role>
-You are an expert summarizer.
-Your job is to summarize the given text content.
-The summary should not be too long, while still cover everything in the content.
-</role>
+    <role>
+    You are an expert summarizer.
+    Your job is to summarize the given text content.
+    The summary should not be too long, while still cover everything in the content.
+    </role>
 
-You will be given the following as input:
-<input>
-- The entire text content, inside the <full_content> tags
-</input>
+    You will be given the following as input:
+    <input>
+    - The entire text content, inside the <full_content> tags
+    </input>
 
-Return the response in the following JSON format:
-{
-    "summary": "the summary of the content"
-}
-"""
+    Return the response in the following JSON format:
+    {
+        "summary": "the summary of the content"
+    }
+    """
 
     messages = [
         {"role": "user", "content": f"""
-<full_content>{content}</full_content>
-"""
+    <full_content>{content}</full_content>
+    """
         }
     ]
 
@@ -74,29 +74,29 @@ def filter_knowledge(summary, knowledge_list):
 
     # Prepare the prompt for filtering
     system_prompt = """
-<role>
-You are an expert course filter.
-Your job is to filter the course summary based on the user's knowledge list.
-The filtered summary should not include the content that is already known by the user.
-</role>
+    <role>
+    You are an expert course filter.
+    Your job is to filter the course summary based on the user's knowledge list.
+    The filtered summary should not include the content that is already known by the user.
+    </role>
 
-You will be given the following as input:
-<input>
-- The entire text content of the course summary, inside the <full_content> tags
-- The user's knowledge list, inside the <knowledge_list> tags
-</input>
+    You will be given the following as input:
+    <input>
+    - The entire text content of the course summary, inside the <full_content> tags
+    - The user's knowledge list, inside the <knowledge_list> tags
+    </input>
 
-Return the response in the following JSON format:
-{
-    "filtered_summary": "the filtered summary of the course"
-}
-"""
+    Return the response in the following JSON format:
+    {
+        "filtered_summary": "the filtered summary of the course"
+    }
+    """
 
     messages = [
         {"role": "user", "content": f"""
-<full_content>{summary}</full_content>
-<knowledge_list>{knowledge_list_str}</knowledge_list>
-"""
+    <full_content>{summary}</full_content>
+    <knowledge_list>{knowledge_list_str}</knowledge_list>
+    """
         }
     ]
 
@@ -128,29 +128,29 @@ def filter_unknown(summary, unknown_list):
 
     # Prepare the prompt for filtering
     system_prompt = """
-<role>
-You are an expert course filter.
-Your job is to filter the course summary based on the user's unknown list.
-The filtered summary should only include the content that is related to the unknown list.
-</role>
+    <role>
+    You are an expert course filter.
+    Your job is to filter the course summary based on the user's unknown list.
+    The filtered summary should only include the content that is related to the unknown list.
+    </role>
 
-You will be given the following as input:
-<input>
-- The entire text content of the course summary, inside the <full_content> tags
-- The user's unknown list, inside the <unknown_list> tags
-</input>
+    You will be given the following as input:
+    <input>
+    - The entire text content of the course summary, inside the <full_content> tags
+    - The user's unknown list, inside the <unknown_list> tags
+    </input>
 
-Return the response in the following JSON format:
-{
-    "filtered_summary": "the filtered summary of the course"
-}
-"""
+    Return the response in the following JSON format:
+    {
+        "filtered_summary": "the filtered summary of the course"
+    }
+    """
 
     messages = [
         {"role": "user", "content": f"""
-<full_content>{summary}</full_content>
-<unknown_list>{unknown_list_str}</unknown_list>
-"""
+    <full_content>{summary}</full_content>
+    <unknown_list>{unknown_list_str}</unknown_list>
+    """
         }
     ]
 
@@ -182,32 +182,32 @@ def split_into_chapters(content):
 
     # Prepare the prompt for chapter generation
     system_prompt = """
-<role>
-You are an expert course creator. 
-Split the course content into logical chapters.
-Each chapter must cover a different part of the course's content.
-</role>
+    <role>
+    You are an expert course creator. 
+    Split the course content into logical chapters.
+    Each chapter must cover a different part of the course's content.
+    </role>
 
-You will be given the following as input:
-<input>
-- The entire text content of the course, inside the <full_content> tags
-</input>
+    You will be given the following as input:
+    <input>
+    - The entire text content of the course, inside the <full_content> tags
+    </input>
 
-Return the response in the following JSON format:
-{
-    "chapters": [
-        {
-            "name": "Chapter name",
-            "content": "A short list of the content of this Chapter. Just enough that an expert at this subject will understand what this chapter is about."
-        }
-    ]
-}
-"""
+    Return the response in the following JSON format:
+    {
+        "chapters": [
+            {
+                "name": "Chapter name",
+                "content": "A short list of the content of this Chapter. Just enough that an expert at this subject will understand what this chapter is about."
+            }
+        ]
+    }
+    """
 
     messages = [
         {"role": "user", "content": f"""
-<full_content>{content}</full_content>
-"""
+    <full_content>{content}</full_content>
+    """
         }
     ]
 
@@ -233,31 +233,31 @@ def generate_chapter(name, summary):
 
     # Prepare the prompt for chapter generation
     system_prompt = """
-<role>
-You are an expert course creator.
-Your job is to create a chapter of a course.
-The chapter should be short and cocise
-The chapter must cover everything in the chapter's summary
-Decorate the content using HTML tags only
-</role>
+    <role>
+    You are an expert course creator.
+    Your job is to create a chapter of a course.
+    The chapter should be short and cocise
+    The chapter must cover everything in the chapter's summary
+    Decorate the content using HTML tags only
+    </role>
 
-You will be given the following as input:
-<input>
-- Name of the chapter, inside the <name> tags
-- Summary of the chapter, inside the <summary> tags
-</input>
+    You will be given the following as input:
+    <input>
+    - Name of the chapter, inside the <name> tags
+    - Summary of the chapter, inside the <summary> tags
+    </input>
 
-Return the response in the following JSON format:
-{
-    "content": "the entire text content of the chapter"
-}
-"""
+    Return the response in the following JSON format:
+    {
+        "content": "the entire text content of the chapter"
+    }
+    """
     
     messages = [
         {"role": "user", "content": f"""
-<name>{name}</name>
-<summary>{summary}</summary>
-"""
+    <name>{name}</name>
+    <summary>{summary}</summary>
+    """
         }
     ]
 
@@ -434,43 +434,43 @@ def generate_exercise(chapter):
     chapter_content = chapter.content
 
     # Generate questions and answers using LLM
-    system_prompt_3 = """"
-<role>
-You are an expert course creator.
-Your job is to create a set of questions and answers for a chapter of a course.
-Each question is an open question, and the answer is a short text.
-The questions must be related to the chapter's content.
-The combination of questions must cover the entire content of the chapter.
-</role>
+    system_prompt = """"
+    <role>
+    You are an expert course creator.
+    Your job is to create a set of questions and answers for a chapter of a course.
+    Each question is an open question, and the answer is a short text.
+    The questions must be related to the chapter's content.
+    The combination of questions must cover the entire content of the chapter.
+    </role>
 
-You will be given the following as input:
-<input>
-- Name of the chapter, inside the <name> tags
-- The entire text content of the chapter, inside the <content> tags
-</input>
+    You will be given the following as input:
+    <input>
+    - Name of the chapter, inside the <name> tags
+    - The entire text content of the chapter, inside the <content> tags
+    </input>
 
-Return the response in the following JSON format:
-{
-    "questions": [
-        {
-            "question_text": "The text of the question",
-            "golden_answer": "The best answer to the question"
-        }
-    ]
-}
-"""
+    Return the response in the following JSON format:
+    {
+        "questions": [
+            {
+                "question_text": "The text of the question",
+                "golden_answer": "The best answer to the question"
+            }
+        ]
+    }
+    """
 
-    messages_3 = [
+    messages = [
         {
             "role": "user", "content": f"""
-<name>{chapter_name}</name>
-<content>{chapter_content}</content>
-"""
+    <name>{chapter_name}</name>
+    <content>{chapter_content}</content>
+    """
         }
     ]
 
     # Get questions and answers
-    exercise_json = llm_caller.generate_response(messages_3, system_prompt_3)[7:-3]
+    exercise_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
     exercise_data = json.loads(exercise_json)
 
     # Create the Exercise object
@@ -497,4 +497,93 @@ Return the response in the following JSON format:
 
     # Save the Exercise object
     exercise.save()
+    return None
+
+def generate_exam(course, is_final):
+    """
+    Generate an exercise object of a chapter, which include:
+        questions
+        golden answers
+    """
+
+    # Initialize LLM caller
+    llm_caller = LLMCaller()
+
+    # Get course content
+    course_content = course.content
+    course_name = course.title
+
+    # prepare parts of system prompt
+    if is_final:
+        before_or_after = "after"
+    else:
+        before_or_after = "before"
+    response_format = {
+        "questions": [
+            {
+                "question_text": "The text of the question",
+                "golden_answer": "The best answer to the question"
+            }
+        ]
+    }
+
+    # prepare system prompt
+    system_prompt_3 = f"""
+    <role>
+    You are an expert course creator.
+    Your job is to create a set of questions and answers for a course.
+    Each question is an open question, and the answer is a short text.
+    The questions must be related to the course's content.
+    The combination of questions must cover the entire content of the course.
+    The question will be given to the user {before_or_after} they study the course.
+    </role>
+
+    You will be given the following as input:
+    <input>
+    - Name of the course, inside the <name> tags
+    - The entire text content of the course, inside the <content> tags
+    </input>
+
+    Return the response in the following JSON format:
+    {response_format}
+    """
+
+    messages = [
+        {
+            "role": "user", "content": f"""
+    <name>{course_name}</name>
+    <content>{course_content}</content>
+    """
+        }
+    ]
+    
+    # Get questions and answers
+    exam_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
+    exam_data = json.loads(exam_json)
+
+    # Create the Exam object
+    exam = Exam.objects.create(
+        course=course,
+        is_final=is_final
+    )
+
+    questions = exercise_data['questions']
+    # Create and save each Question object
+    for question_data in questions:
+        question_text = question_data['question_text']
+        golden_answer = question_data['golden_answer']
+
+        # Create Question object
+        question = generate_question(
+            text=question_text,
+            golden_answer=golden_answer,
+            type='EXAM'
+        )
+        question.save()
+
+        # Add the question to the Exam object
+        exam.questions.add(question)
+
+    # Save the Exam object
+    exam.save()
     return None
