@@ -11,15 +11,15 @@ tset2345
 
 TODO: Add a system for admin to add course
 
-(untest)update generate_course_view view
-(done?)update course model
+(d)update generate_course_view view
+(d)update course model
     (done, inside the exam model)add pre/final exam
-(untest)add function to generate pre/final exam
-(untest)create the exam page
-    (untest, only GET part)view
-    (untest)url
-    (untest)template
-(untest)create a system to handle submiting exam
+(d)add function to generate pre/final exam
+(d)create the exam page
+    (only GET part)view
+    url
+    template
+(done for pre-course)create a system to handle submiting exam
     get answers
     grade answers
     update knowledge database
@@ -29,4 +29,7 @@ TODO: Add a system for admin to add course
     if final:
         generate extra chapter
     redirect to course_detail page
-(untest)make the "generate chapter" button lead to the pre-course exam
+(d)make the "generate chapter" button lead to the pre-course exam
+add a system to unlock final exam
+    once all exercises are done?
+        need to add a boolean to check that

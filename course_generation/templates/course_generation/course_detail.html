@@ -26,10 +26,10 @@
         </div>
         <div class="col-md-4 text-end">
             {% if not chapters %}
-            <form method="post">
+            <!-- <form method="post">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-primary">Generate Personalized Content</button>
-            </form>
+            </form> -->
             <a href="{% url 'exam_and_evaluation:exam' course.id 'False' %}" class="btn btn-primary">Generate Chapter</a>
             {% endif %}
         </div>
@@ -53,7 +53,7 @@
             </div>
             {% else %}
             <div class="alert alert-info">
-                No chapters generated yet. Click the "Generate Personalized Content" button to start.
+                No chapters generated yet. Click the "Generate Chapter" button to start.
             </div>
             {% endif %}
         </div>

@@ -18,8 +18,10 @@ def exam_view(request, course_id, is_final_str):
     user = request.user
 
     is_final = False
+    exam_type = "Pre"
     if is_final_str == "True":
         is_final = True
+        exam_type = "Final"
 
     # get course
     course = Course.objects.filter(id=course_id).first()
@@ -27,7 +29,7 @@ def exam_view(request, course_id, is_final_str):
 
     # get exam
     exam = Exam.objects.filter(course_id=course_id, is_final=is_final).first()
-    questions = exam.questions
+    questions = exam.questions.all()
 
     # POST = submit answers
     if request.method == 'POST':
@@ -91,12 +93,12 @@ def exam_view(request, course_id, is_final_str):
 
     # GET = start exam
     context = {
-        'course_name': , course_name
-        'course_id': , course_id
-        'exam_type': , is_final
+        'course_name': course_name,
+        'course_id': course_id,
+        'exam_type': exam_type,
         'questions': questions
     }
-    return render(request, 'exam.html', context)
+    return render(request, 'exam_and_evaluation/exam.html', context)
 
 def exercise_view(request, chapter_id):
     """

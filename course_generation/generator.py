@@ -5,6 +5,51 @@ from django.contrib.auth.models import User
 from llm_integration.llm_caller_3 import LLMCaller
 import json
 
+def describe(content):
+    """
+    Describe the given content.
+
+    Input:
+    content: string. The entire text of the content
+    """
+
+    # Initialize LLM caller
+    llm_caller = LLMCaller()
+
+    # Prepare the prompt for summarization
+    system_prompt = """
+    <role>
+    You are an expert summarizer.
+    Your job is to create a description of what's in a course.
+    The description should be short and concise.
+    </role>
+
+    You will be given the following as input:
+    <input>
+    - The entire text content of the course, inside the <full_content> tags
+    </input>
+
+    Return the response in the following JSON format:
+{
+    description": "the description of the course"
+}
+    """
+
+    messages = [
+        {"role": "user", "content": f"""
+    <full_content>{content}</full_content>
+    """
+        }
+    ]
+
+    # Get description
+    description_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
+    print(f"describe: json = {description_json}")
+    description_data = json.loads(description_json)
+    description = description_data['description']
+    
+    return description
+
 def summarize(content):
     """
     Summarize the given content.
@@ -34,9 +79,9 @@ def summarize(content):
     </input>
 
     Return the response in the following JSON format:
-    {
-        "summary": "the summary of the content"
-    }
+{
+    "summary": "the summary of the content"
+}
     """
 
     messages = [
@@ -87,9 +132,9 @@ def filter_knowledge(summary, knowledge_list):
     </input>
 
     Return the response in the following JSON format:
-    {
-        "filtered_summary": "the filtered summary of the course"
-    }
+{
+    "filtered_summary": "the filtered summary of the course"
+}
     """
 
     messages = [
@@ -141,9 +186,9 @@ def filter_unknown(summary, unknown_list):
     </input>
 
     Return the response in the following JSON format:
-    {
-        "filtered_summary": "the filtered summary of the course"
-    }
+{
+    "filtered_summary": "the filtered summary of the course"
+}
     """
 
     messages = [
@@ -194,14 +239,14 @@ def split_into_chapters(content):
     </input>
 
     Return the response in the following JSON format:
-    {
-        "chapters": [
-            {
-                "name": "Chapter name",
-                "content": "A short list of the content of this Chapter. Just enough that an expert at this subject will understand what this chapter is about."
-            }
-        ]
-    }
+{
+    "chapters": [
+        {
+            "name": "Chapter name",
+            "content": "A short list of the content of this Chapter. Just enough that an expert at this subject will understand what this chapter is about."
+        }
+    ]
+}
     """
 
     messages = [
@@ -248,9 +293,9 @@ def generate_chapter(name, summary):
     </input>
 
     Return the response in the following JSON format:
-    {
-        "content": "the entire text content of the chapter"
-    }
+{
+    "content": "the entire text content of the chapter"
+}
     """
     
     messages = [
@@ -450,14 +495,14 @@ def generate_exercise(chapter):
     </input>
 
     Return the response in the following JSON format:
-    {
-        "questions": [
-            {
-                "question_text": "The text of the question",
-                "golden_answer": "The best answer to the question"
-            }
-        ]
-    }
+{
+    "questions": [
+        {
+            "question_text": "The text of the question",
+            "golden_answer": "The best answer to the question"
+        }
+    ]
+}
     """
 
     messages = [
@@ -528,7 +573,7 @@ def generate_exam(course, is_final):
     }
 
     # prepare system prompt
-    system_prompt_3 = f"""
+    system_prompt = f"""
     <role>
     You are an expert course creator.
     Your job is to create a set of questions and answers for a course.
@@ -536,6 +581,7 @@ def generate_exam(course, is_final):
     The questions must be related to the course's content.
     The combination of questions must cover the entire content of the course.
     The question will be given to the user {before_or_after} they study the course.
+    The exam must have no more than 10 questions
     </role>
 
     You will be given the following as input:
@@ -559,6 +605,7 @@ def generate_exam(course, is_final):
     
     # Get questions and answers
     exam_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
+    print(f"generate_exam: json = {exam_json}")
     exam_data = json.loads(exam_json)
 
     # Create the Exam object
@@ -567,7 +614,7 @@ def generate_exam(course, is_final):
         is_final=is_final
     )
 
-    questions = exercise_data['questions']
+    questions = exam_data['questions']
     # Create and save each Question object
     for question_data in questions:
         question_text = question_data['question_text']

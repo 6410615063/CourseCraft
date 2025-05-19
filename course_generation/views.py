@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from .models import Course, Chapter, UserKnowledge
-from .generator import generate_course
+from .generator import generate_course, generate_exam, describe
 # from .forms import UserKnowledgeForm
 from llm_integration.llm_caller_3 import LLMCaller
 import json
@@ -17,58 +17,38 @@ def generate_course_view(request):
         print("generate_course: form filled")
 
         try:
-            # TODO: replace the below code with these steps:
             # get course name(topic) and content(content)
-            # make a course object with name and content
-            # make 2 exam for the course, (is_final=True) and (is_final=False)
-            # redirect to course_list page
-
             data = json.loads(request.body)
             topic = data.get('topic')
-            knowledge_level = data.get('knowledge_level')
-            
-            print("generate_course: 1")
+            content = data.get('content')
 
-            # Get user's knowledge level for the topic
-            user_knowledge = UserKnowledge.objects.filter(
-                user=request.user,
-                topic=topic
-            ).first()
-            
-            print("generate_course: 2")
+            print("generate_course: generating description")
+            description = describe(content)
 
-            # Prepare the prompt for the LLM
-            llm_caller = LLMCaller()
-            system_prompt = f"""You are an expert course creator. Create a personalized course for {request.user.username} 
-            on the topic of {topic}. The user's current knowledge level is {user_knowledge.knowledge_level if user_knowledge else 'beginner'}.
-            The target knowledge level is {knowledge_level}."""
-            
-            messages = [
-                {"role": "user", "content": f"Please create a comprehensive course on {topic}."}
-            ]
-            
-            # Generate course content (currently as a str, might turn into json later)
-            course_content = llm_caller.generate_response(messages, system_prompt)
-            
-            print("generate_course: 3")
-
-            # Create new course
+            # make a course object with name and content
             course = Course.objects.create(
-                user=request.user,
-                title=f"{topic.title()} Course",
-                description=f"Personalized course on {topic}",
-                content=course_content,
-                knowledge_level=knowledge_level
+                title=topic,
+                description=description,
+                content=content
             )
-            
-            print("generate_course: 4")
 
+            try:
+                print("generate_course: generating pre exam")
+                generate_exam(course, False)
+                print("generate_course: generating final exam")
+                generate_exam(course, True)
+            except Exception as e:
+                # if there is error when creating any exam, delete the course
+                course.delete()
+                raise
+
+            # redirect to course_list page (for AJAX, return JSON with course_id)
             return JsonResponse({
                 'status': 'success',
                 'course_id': course.id,
                 'message': 'Course generated successfully'
             })
-            
+
         except Exception as e:
             print("generate_course: error")
 
@@ -76,7 +56,7 @@ def generate_course_view(request):
                 'status': 'error',
                 'message': str(e)
             }, status=400)
-    
+
     print("generate_course: entering page")
 
     return render(request, 'course_generation/generate_course.html')
@@ -95,11 +75,11 @@ def course_detail(request, course_id):
     user_chapters = Chapter.objects.filter(user=request.user, course=course)
     
     # TODO: this should get removed once chapter is created after pre exam
-    if request.method == 'POST':
-        # Start chapter generation
-        # generate_course(user, course)
-        # messages.success(request, 'Course generation started!')
-        # return redirect('course_generation:course_detail', course_id=course.id)
+    # if request.method == 'POST':
+    #     # Start chapter generation
+    #     generate_course(user, course)
+    #     messages.success(request, 'Course generation started!')
+    #     return redirect('course_generation:course_detail', course_id=course.id)
     
     return render(request, 'course_generation/course_detail.html', {
         'course': course,
