@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'course_generation',  # Course generation app
     'authentication',  # Authentication app
     'exam_and_evaluation',  # Exam and evaluation app
+    'CourseCraftApp'
 ]
 
 MIDDLEWARE = [

@@ -54,17 +54,45 @@ You will be given the following as input:
 
 Return the response in the following JSON format:
 {
-    "score": "a decimal number between 0 and 10",
+    "score": "a decimal number between 0.00 and 10.00",
     "explanation": "a short string of why you give this score"
 }
 
 Use the following criteria to determine the score:
 <criteria>
-- The answer is correct and complete: 10
-- The answer is partially correct: 5
-- The answer is incorrect: 0
+  Evaluate the Student Answer based on the following three criteria. Each criterion is scored out of 3.33 points. The final score is the sum of all three criteria (max: 10). Partial scores (e.g., 2.75, 3.10) are allowed.
+
+  1. Relevance (0–3.33)  
+  How well does the answer address the specific question?  
+  - 3.33 – Fully relevant and directly answers the question.  
+  - 1.67–3.32 – Mostly relevant, but may miss some part of the question or include minor off-topic information.  
+  - 0.01–1.66 – Partially relevant, with significant deviation from the question focus.  
+  - 0.00 – Completely irrelevant or does not address the question.  
+
+  2. Correctness (0–3.33)  
+  Is the information factually or logically correct according to the best answer?  
+  - 3.33 – All major points are correct.  
+  - 1.67–3.32 – Mostly correct, with minor factual or logical errors.  
+  - 0.01–1.66 – Some correctness, but includes major errors.  
+  - 0.00 – Completely incorrect or misleading.  
+
+  3. Completeness (0–3.33)  
+  Does the answer cover all key aspects or points found in the best answer?  
+  - 3.33 – Fully complete and includes all key points.  
+  - 1.67–3.32 – Covers most key points, but misses some.  
+  - 0.01–1.66 – Only a few relevant points included.  
+  - 0.00 – Almost nothing relevant is included.  
+
+  Final Score = Sum of all three criteria (rounded to 2 decimal places).
 </criteria>
+
 """
+
+# <criteria>
+# - The answer is correct and complete: 10
+# - The answer is partially correct: 5
+# - The answer is incorrect: 0
+# </criteria>
 
     messages = [
         {
@@ -77,7 +105,7 @@ Use the following criteria to determine the score:
     ]
 
     # Generate evaluation using LLM
-    score_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
+    score_json = llm_caller.generate_response(messages, system_prompt)[7:-3].replace('\n', '')
     score_data = json.loads(score_json)
 
     # Parse the response to get the score
@@ -230,9 +258,9 @@ Return the response in the following JSON format:
 Here are the criteria to determine the knowledge and unknown:
 <criteria>
 - neither list should have duplicates or empty strings
+    - 'duplicate' include strings that use difference words, but have the exact same meaning
 - if something is in both lists, it should be removed from the unknown list
-- if any items in the knowledge list are too similar, they should be merged into one
-- if any items in the unknown list are too similar, they should be merged into one
+- everything else should stay the same
 </criteria>
 """
 

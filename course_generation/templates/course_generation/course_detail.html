@@ -26,15 +26,11 @@
         </div>
         <div class="col-md-4 text-end">
             {% if not chapters %}
-            <!-- <form method="post">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary">Generate Personalized Content</button>
-            </form> -->
             <a href="{% url 'exam_and_evaluation:exam' course.id 'False' %}" class="btn btn-primary">Generate Chapter</a>
             {% endif %}
-            {% if unlock_final_exam %}
+            <!-- {% if unlock_final_exam %}
             <a href="{% url 'exam_and_evaluation:exam' course.id 'True' %}" class="btn btn-success mt-2">Final Exam</a>
-            {% endif %}
+            {% endif %} -->
         </div>
     </div>
 
@@ -49,9 +45,9 @@
                 <a href="{% url 'course_generation:chapter_detail' chapter.id %}" class="list-group-item list-group-item-action">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">{{ chapter.name }}</h5>
-                        <!-- <small>{{ chapter.created_at|date:"M d, Y" }}</small> -->
+                        <!-- TODO: replace this with score -->
                         {% if chapter.is_done %}
-                        <small>Finished</small>
+                        <small>Score: {{ chapter.score }}/10.00</small>
                         {% endif %}
                     </div>
                 </a>
@@ -60,6 +56,22 @@
             {% else %}
             <div class="alert alert-info">
                 No chapters generated yet. Click the "Generate Chapter" button to start.
+            </div>
+            {% endif %}
+
+            <h2>Exam</h2>
+            {% if unlock_final_exam %}
+            <div class="list-group">
+                <a href="{% url 'exam_and_evaluation:exam' course.id 'True' %}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">Final Exam</h5>
+                        <!-- <small>Score: {{ exam_final_score }}/10.00</small> -->
+                    </div>
+                </a>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                Finish every Chapters's Exercise to unlock the FInal Exam
             </div>
             {% endif %}
         </div>

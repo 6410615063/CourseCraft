@@ -335,6 +335,7 @@ def generate_course(user, course):
     # filter the course content based on the user's knowledge
     user_knowledge = UserKnowledge.objects.filter(user=user).first()
     filtered_summary = filter_knowledge(course_summary, user_knowledge.knowledge_list if user_knowledge else [])
+    print(f"filtered summary: {filtered_summary}")
 
     print("generate_course: 2")
 

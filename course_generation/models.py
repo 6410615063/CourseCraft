@@ -21,6 +21,7 @@ class Chapter(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_done = models.BooleanField(default=False)
+    score = models.DecimalField(max_digits=4, decimal_places=2, default=0.00)  # Score with 2 decimal places
 
     class Meta:
         ordering = ['created_at']
@@ -61,6 +62,7 @@ class Exercise(models.Model):
     questions = models.ManyToManyField(Question, related_name='exercises')
     created_at = models.DateTimeField(auto_now_add=True)
     is_done = models.BooleanField(default=False)
+    score = models.DecimalField(max_digits=4, decimal_places=2, default=0.00)  # Score with 2 decimal places
 
     def __str__(self):
         return f"Exercise for {self.chapter.name}"
@@ -70,6 +72,8 @@ class Exam(models.Model):
     questions = models.ManyToManyField(Question, related_name='exams')
     created_at = models.DateTimeField(auto_now_add=True)
     is_final = models.BooleanField(default=False)  # True for final exam, False for pre-course exam
+    is_done = models.BooleanField(default=False)
+    score = models.DecimalField(max_digits=4, decimal_places=2, default=0.00)  # Score with 2 decimal places
 
     def __str__(self):
         return f"Exam for {self.course.title} ({'Final' if self.is_final else 'Pre-course'})"

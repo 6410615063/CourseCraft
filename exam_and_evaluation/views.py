@@ -35,6 +35,7 @@ def exam_view(request, course_id, is_final_str):
     if request.method == 'POST':
         # handle answers
 
+        score_sum = 0.00
         unknown_list_for_extra_chapter = []
         for question in questions:
             # get answers
@@ -45,6 +46,7 @@ def exam_view(request, course_id, is_final_str):
             # grade answers
             score = evaluate_answer2(question, user_answer)
             print(f"Score: {score}")
+            score_sum += score
         
             # determine user's knowledge
             knowledge_json = determine_knowledge(question, user_answer, score)
@@ -71,6 +73,12 @@ def exam_view(request, course_id, is_final_str):
                 # add unknown to the list of unknown to based extra chapter on
                 unknown_list_for_extra_chapter.extend(unknown_list)
             print("-------------------")
+
+        # Save Exam score
+        exam.is_done =True
+        score_avg = score_sum / len(questions)
+        exam.score = score_avg
+        exam.save()
 
         if not is_final:
         # if pre-course:
@@ -125,6 +133,7 @@ def exercise_view(request, chapter_id):
         questions = []
 
     if request.method == 'POST':
+        score_sum = 0.00
         unknown_list_for_extra_chapter = []
         # Handle exercise submission
         for question in questions:
@@ -135,6 +144,7 @@ def exercise_view(request, chapter_id):
             # Validate the answer
             score = evaluate_answer2(question, user_answer)
             print(f"Score: {score}")
+            score_sum += score
 
             # determine user's knowledge
             knowledge_json = determine_knowledge(question, user_answer, score)
@@ -161,13 +171,20 @@ def exercise_view(request, chapter_id):
                 # add unknown to the list of unknown to based extra chapter on
                 unknown_list_for_extra_chapter.extend(unknown_list)
             
-            # Update that user has done the exercise
-            exercise.is_done = True
-            exercise.save()
-            chapter.is_done = True
-            chapter.save()
-
             print("-------------------")
+
+        # Update that user has done the exercise
+        exercise.is_done = True
+        chapter.is_done = True
+
+        # Save average score
+        score_avg = score_sum / len(questions)
+        exercise.score = score_avg
+        chapter.score = score_avg
+        
+        exercise.save()
+        chapter.save()
+
         # Check if extra chapter is needed
         if unknown_list_for_extra_chapter:
             # Generate extra chapter based on unknown_list

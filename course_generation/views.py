@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from .models import Course, Chapter, UserKnowledge, Exercise
+from .models import Course, Chapter, UserKnowledge, Exercise, Exam
 from .generator import generate_course, generate_exam, describe
 # from .forms import UserKnowledgeForm
 from llm_integration.llm_caller_3 import LLMCaller
@@ -76,23 +76,27 @@ def course_detail(request, course_id):
     user = request.user
     user_chapters = Chapter.objects.filter(user=user, course=course)
     
-    # TODO: check if all chapters's exercise have been done
-    #   if yes, unlock final exam
-    
-    unlock_final_exam = True
+    unlock_final_exam = (len(user_chapters) > 0)
     for chapter in user_chapters:
-        # # get exercise
-        # exercise = Exercise.objects.filter(chapter=chapter).first()
         # get is_done
         # is_done = exercise.is_done
         is_done = chapter.is_done
         # only unlock if all exercises are done
         unlock_final_exam = unlock_final_exam and is_done
 
+    # # get exam
+    # exam_pre = Exam.objects.filter(course_id=course_id, is_final=False).first()
+    # exam_final = Exam.objects.filter(course_id=course_id, is_final=True).first()
+    # # get exam scores for display
+    # exam_score_pre = exam_pre.score
+    # exam_score_final = exam_final.score
+
     return render(request, 'course_generation/course_detail.html', {
         'course': course,
         'chapters': user_chapters,
-        'unlock_final_exam': unlock_final_exam
+        'unlock_final_exam': unlock_final_exam,
+        # 'exam_score_pre': exam_score_pre,
+        # 'exam_score_final': exam_score_final
     })
 
 @login_required

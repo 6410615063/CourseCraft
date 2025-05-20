@@ -24,5 +24,6 @@ urlpatterns = [
     path('courses/', include('course_generation.urls')),
     path('auth/', include('authentication.urls')),
     path('exam/', include('exam_and_evaluation.urls')),
+    path('', include('CourseCraftApp.urls')),
     # path('', auth_views.RedirectView.as_view(url='/auth/login/', permanent=True)),
 ]
