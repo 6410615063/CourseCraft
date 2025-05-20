@@ -564,6 +564,7 @@ def generate_exam(course, is_final):
         before_or_after = "after"
     else:
         before_or_after = "before"
+        
     response_format = {
         "questions": [
             {
@@ -605,7 +606,7 @@ def generate_exam(course, is_final):
     ]
     
     # Get questions and answers
-    exam_json = llm_caller.generate_response(messages, system_prompt)[7:-3]
+    exam_json = llm_caller.generate_response(messages, system_prompt)[7:-3].replace('\n', '')
     print(f"generate_exam: json = {exam_json}")
     exam_data = json.loads(exam_json)
 

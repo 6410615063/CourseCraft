@@ -60,7 +60,8 @@ Return the response in the following JSON format:
 
 Use the following criteria to determine the score:
 <criteria>
-  Evaluate the Student Answer based on the following three criteria. Each criterion is scored out of 3.33 points. The final score is the sum of all three criteria (max: 10). Partial scores (e.g., 2.75, 3.10) are allowed.
+  Evaluate the Student Answer based on the following three criteria. Each criterion is scored out of 3.33 points. 
+  The final score is the sum of all three criteria (max: 10). Partial scores (e.g., 2.75, 3.10) are allowed.
 
   1. Relevance (0–3.33)  
   How well does the answer address the specific question?  
@@ -85,7 +86,6 @@ Use the following criteria to determine the score:
 
   Final Score = Sum of all three criteria (rounded to 2 decimal places).
 </criteria>
-
 """
 
 # <criteria>
