@@ -20,6 +20,7 @@ class Chapter(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_done = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['created_at']
@@ -59,6 +60,7 @@ class Exercise(models.Model):
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='exercises')
     questions = models.ManyToManyField(Question, related_name='exercises')
     created_at = models.DateTimeField(auto_now_add=True)
+    is_done = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Exercise for {self.chapter.name}"

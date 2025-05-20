@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from .models import Course, Chapter, UserKnowledge
+from .models import Course, Chapter, UserKnowledge, Exercise
 from .generator import generate_course, generate_exam, describe
 # from .forms import UserKnowledgeForm
 from llm_integration.llm_caller_3 import LLMCaller
@@ -13,6 +13,8 @@ import json
 
 @login_required
 def generate_course_view(request):
+    """The view for generating Course"""
+    
     if request.method == 'POST':
         print("generate_course: form filled")
 
@@ -72,18 +74,25 @@ def course_detail(request, course_id):
     """Display course details and allow user to start course generation"""
     course = get_object_or_404(Course, id=course_id)
     user = request.user
-    user_chapters = Chapter.objects.filter(user=request.user, course=course)
+    user_chapters = Chapter.objects.filter(user=user, course=course)
     
-    # TODO: this should get removed once chapter is created after pre exam
-    # if request.method == 'POST':
-    #     # Start chapter generation
-    #     generate_course(user, course)
-    #     messages.success(request, 'Course generation started!')
-    #     return redirect('course_generation:course_detail', course_id=course.id)
+    # TODO: check if all chapters's exercise have been done
+    #   if yes, unlock final exam
     
+    unlock_final_exam = True
+    for chapter in user_chapters:
+        # # get exercise
+        # exercise = Exercise.objects.filter(chapter=chapter).first()
+        # get is_done
+        # is_done = exercise.is_done
+        is_done = chapter.is_done
+        # only unlock if all exercises are done
+        unlock_final_exam = unlock_final_exam and is_done
+
     return render(request, 'course_generation/course_detail.html', {
         'course': course,
-        'chapters': user_chapters
+        'chapters': user_chapters,
+        'unlock_final_exam': unlock_final_exam
     })
 
 @login_required

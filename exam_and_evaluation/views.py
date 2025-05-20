@@ -160,6 +160,13 @@ def exercise_view(request, chapter_id):
             if score < 0.5:
                 # add unknown to the list of unknown to based extra chapter on
                 unknown_list_for_extra_chapter.extend(unknown_list)
+            
+            # Update that user has done the exercise
+            exercise.is_done = True
+            exercise.save()
+            chapter.is_done = True
+            chapter.save()
+
             print("-------------------")
         # Check if extra chapter is needed
         if unknown_list_for_extra_chapter:

@@ -32,6 +32,9 @@
             </form> -->
             <a href="{% url 'exam_and_evaluation:exam' course.id 'False' %}" class="btn btn-primary">Generate Chapter</a>
             {% endif %}
+            {% if unlock_final_exam %}
+            <a href="{% url 'exam_and_evaluation:exam' course.id 'True' %}" class="btn btn-success mt-2">Final Exam</a>
+            {% endif %}
         </div>
     </div>
 
@@ -39,14 +42,17 @@
 
     <div class="row mt-4">
         <div class="col-12">
-            <h2>Your Personalized Chapters</h2>
+            <h2>Chapters</h2>
             {% if chapters %}
             <div class="list-group">
                 {% for chapter in chapters %}
                 <a href="{% url 'course_generation:chapter_detail' chapter.id %}" class="list-group-item list-group-item-action">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">{{ chapter.name }}</h5>
-                        <small>{{ chapter.created_at|date:"M d, Y" }}</small>
+                        <!-- <small>{{ chapter.created_at|date:"M d, Y" }}</small> -->
+                        {% if chapter.is_done %}
+                        <small>Finished</small>
+                        {% endif %}
                     </div>
                 </a>
                 {% endfor %}
@@ -59,4 +65,4 @@
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

@@ -10,7 +10,7 @@ class CourseAdmin(admin.ModelAdmin):
 
 @admin.register(Chapter)
 class ChapterAdmin(admin.ModelAdmin):
-    list_display = ('name', 'course', 'user', 'created_at')
+    list_display = ('name', 'course', 'user', 'created_at', 'is_done')
     list_filter = ('created_at', 'course')
     search_fields = ('name', 'content', 'course__title', 'user__username')
     date_hierarchy = 'created_at'
